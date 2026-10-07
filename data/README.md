@@ -117,6 +117,17 @@ for its Avro candidate list. Only the encoding changed: one word per line, each
 of Avro's tables opened by an `@name` line, and the source's eleven `\u0200c`
 typos written as the `\u200c` (ZWNJ) they were meant to be.
 
+### Khipro glide spellings
+
+`bn/bn_khipro_glide.txt.gz` holds the Khipro spellings of every word of
+`bn/bn_full.txt.gz`, one word per line followed by its spellings, tab
+separated. WM Keyboard reads it to glide on its Khipro layout instead of
+working the spellings out on the phone, which takes minutes of every core.
+It is generated, not edited: `scripts/build_bn_khipro_glide.sh` compiles WM
+Keyboard's own Khipro interpreter (running the Khipro team's MIT-licensed
+`bn-khipro.mim`) backwards over the list. Rerun it whenever `bn_full.txt.gz`
+changes.
+
 ### Offensive Word Lists
 
 The `<lang>_offensive.txt.gz` files contain offensive, profane, and sensitive words to be used for content filtering. They are aggregated from various permissive open-source repositories:
