@@ -11,6 +11,7 @@ on:
     paths:
       - 'data/**/*.gz'
       - 'cjk/*.tsv'
+      - 'cjk/s2t_phrases.txt'
       - 'scripts/build_language_packs.py'
       - '.github/workflows/language-packs.yml'
   workflow_dispatch:

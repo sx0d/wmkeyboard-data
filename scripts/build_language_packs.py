@@ -31,11 +31,12 @@ DATA = ROOT / "data"
 CJK = ROOT / "cjk"
 
 # Conversion dictionaries, by the folder of the language they serve. Mirrors
-# CjkDictCatalog in the app (langId and path of each pack).
+# CjkDictCatalog in the app (langId, alsoLangIds and path of each pack). The
+# OpenCC phrase table serves Traditional output in both Chinese and Cantonese.
 CJK_BY_FOLDER = {
-    "zh": ["pinyin.tsv", "stroke.tsv", "cangjie.tsv"],
+    "zh": ["pinyin.tsv", "stroke.tsv", "cangjie.tsv", "s2t_phrases.txt"],
     "ja": ["ja_kana.tsv"],
-    "yue": ["jyutping.tsv"],
+    "yue": ["jyutping.tsv", "s2t_phrases.txt"],
 }
 
 # The licence file that goes with each conversion dictionary, where there is one.
@@ -44,6 +45,7 @@ CJK_LICENSES = {
     "stroke.tsv": "LICENSE_stroke.txt",
     "cangjie.tsv": "LICENSE_cangjie.txt",
     "jyutping.tsv": "LICENSE_jyutping.txt",
+    "s2t_phrases.txt": "LICENSE_opencc.txt",
 }
 
 FIXED_TIME = (2024, 1, 1, 0, 0, 0)
