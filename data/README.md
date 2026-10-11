@@ -62,6 +62,7 @@ This repository redistributes and packages data from the following open-source p
 | [hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords) (OpenSubtitles 2018) | All languages except those listed below. |
 | [rspeer/wordfreq](https://github.com/rspeer/wordfreq) | `bn`, `ca`, `hi`, `ja`, `ta`, `uk` |
 | [urduhack/urdu-words](https://github.com/urduhack/urdu-words) | `ur` |
+| [ebukva/bs_BA](https://github.com/ebukva/bs_BA) (Hunspell, expanded by [`scripts/import_bs_hunspell.py`](../scripts/import_bs_hunspell.py)) over the OpenSubtitles counts | `bs` |
 | [kasunw22/sinhala-para-dict](https://github.com/kasunw22/sinhala-para-dict) | `si` |
 | [vigneshwaran-chandrasekaran/tamil-language-words-list](https://github.com/vigneshwaran-chandrasekaran/tamil-language-words-list) | `ta` |
 | [tahmid02016/bangla-wordlist](https://github.com/tahmid02016/bangla-wordlist) | `bn` |
@@ -333,6 +334,7 @@ Each dictionary retains the license of its original source.
 | Most frequency lists | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
 | `*_bigrams`, `*_trigrams` built from the Leipzig Corpora Collection | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 | `ur` | [MIT](https://github.com/urduhack/urdu-words/blob/master/LICENSE) |
+| `bs` | Counts: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Spelling forms: [LGPL-3.0](https://github.com/ebukva/bs_BA/blob/master/license.txt), ebukva/bs_BA |
 | `si` | [MIT](https://github.com/kasunw22/sinhala-para-dict/blob/main/LICENSE) |
 | `tlh` | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
 | `qya` | [Ardalambion](https://ardalambion.net) |
