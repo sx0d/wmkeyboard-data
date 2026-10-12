@@ -35,7 +35,11 @@ CEDICT_URL = "https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdb
 SCRIPT_DIR = Path(__file__).resolve().parent
 CJK_DIR = SCRIPT_DIR.parent
 REPO_DIR = CJK_DIR.parent
-DEFAULT_OUT = CJK_DIR / "pinyin.tsv"
+# pinyin_v2.tsv, not pinyin.tsv: the app pins each pack by SHA-256, so a
+# rebuilt pack goes out under a new name and the old file stays byte-for-byte
+# as it was for the app versions that pinned it. Bump the name again for the
+# next rebuild that changes the bytes, and repin it in CjkDictCatalog.
+DEFAULT_OUT = CJK_DIR / "pinyin_v2.tsv"
 # Simplified-script corpus counts (hermitdave/FrequencyWords, OpenSubtitles
 # 2018), the same family of list build_jyutping_dict.py reads for Traditional.
 DEFAULT_CORPUS = REPO_DIR / "data" / "zh_cn" / "zh_cn_full.txt.gz"

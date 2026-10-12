@@ -33,8 +33,11 @@ CJK = ROOT / "cjk"
 # Conversion dictionaries, by the folder of the language they serve. Mirrors
 # CjkDictCatalog in the app (langId, alsoLangIds and path of each pack). The
 # OpenCC phrase table serves Traditional output in both Chinese and Cantonese.
+# Both Pinyin tables go in: pinyin_v2.tsv for current app versions, pinyin.tsv
+# for the ones that pinned it before the 2026-10 rescore. Each version installs
+# the one it knows and passes over the other.
 CJK_BY_FOLDER = {
-    "zh": ["pinyin.tsv", "stroke.tsv", "cangjie.tsv", "s2t_phrases.txt"],
+    "zh": ["pinyin_v2.tsv", "pinyin.tsv", "stroke.tsv", "cangjie.tsv", "s2t_phrases.txt"],
     "ja": ["ja_kana.tsv"],
     "yue": ["jyutping.tsv", "s2t_phrases.txt"],
 }

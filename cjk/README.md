@@ -13,7 +13,8 @@ header comments.
 
 | File | Format | Rows / size | Source | License |
 |---|---|---|---|---|
-| `pinyin.tsv` | `reading⇥word⇥freq` — toneless concatenated Pinyin (lowercase ASCII) → Simplified Hanzi | ~121.4k · 2.6 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict); frequencies from [`data/zh_cn`](../data/zh_cn) | CC BY-SA 4.0 |
+| `pinyin_v2.tsv` | `reading⇥word⇥freq` — toneless concatenated Pinyin (lowercase ASCII) → Simplified Hanzi | ~121.4k · 2.6 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict); frequencies from [`data/zh_cn`](../data/zh_cn) | CC BY-SA 4.0 |
+| `pinyin.tsv` | The same, before the 2026-10 rescore. Frozen: app versions before it pin these exact bytes, so it is never rebuilt in place | ~120.6k · 2.4 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict) | CC BY-SA 4.0 |
 | `ja_kana.tsv` | `reading⇥word⇥freq` — hiragana reading → kanji/kana surface | ~1.08M · 40 MB | [Google Mozc](https://github.com/google/mozc) OSS dictionary (`dictionary_oss`) | BSD 3-Clause |
 | `stroke.tsv` | `strokeCode⇥hanzi⇥freq` — 1–5 stroke-class sequence → Simplified Hanzi | ~20.9k · 445 KB | [yefeijiang/Chinese-characters-code-table](https://github.com/yefeijiang/Chinese-characters-code-table); frequencies from CC-CEDICT ordering | BSD 2-Clause |
 | `cangjie.tsv` | `code⇥hanzi⇥freq` — 1–5 Cangjie radical code (lowercase ASCII a–y) → Hanzi | ~29.2k · 351 KB | [Unicode Unihan Database](https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip) (`kCangjie` field) | Unicode License V3 |
@@ -27,8 +28,15 @@ Stroke classes: `1`=一 (héng), `2`=丨 (shù), `3`=丿 (piě), `4`=丶 (diǎn)
 
 The app pins these (see `CjkDictCatalog.kt`); recompute with `shasum -a 256 <file>` after a rebuild.
 
+A pinned file is never overwritten: every app version already installed checks
+it against the checksum it shipped with, so changed bytes under the same name
+break the download for all of them. A rebuild that changes a pack goes out
+under a new name (`pinyin.tsv` → `pinyin_v2.tsv`), the old file stays, and the
+app's catalog moves to the new name in the same release.
+
 ```
-pinyin.tsv    2586937  0c572b5f5699378beb0eab5ec81cf79bb277e0f100d3c944d8969b7445b1a0c9
+pinyin_v2.tsv 2586937  0c572b5f5699378beb0eab5ec81cf79bb277e0f100d3c944d8969b7445b1a0c9
+pinyin.tsv    2489699  8baab4c758499272e36dba4bda4253317a4f93bb88bcf386ea86196c50d73715
 ja_kana.tsv  41531397  189214b81968c857d7cb020c52fc087ee44918ab28534194f79ea66f45c17a70
 stroke.tsv     445573  87d790c976b28e54107aef1af4ea3cea6e608500de0bcb3c01af7d8f1f8c52e8
 cangjie.tsv    351337  77a5a4c054019e3a3ea875e86a37cb08b71ce29392b6680208bb0c5749feb25d
@@ -42,7 +50,7 @@ The `tools/` scripts fetch each upstream source and regenerate its table (no
 arguments needed; each downloads what it needs):
 
 ```bash
-python3 tools/build_cedict_pinyin.py   # → pinyin.tsv   (from CC-CEDICT; reads data/zh_cn for frequencies)
+python3 tools/build_cedict_pinyin.py   # → pinyin_v2.tsv (from CC-CEDICT; reads data/zh_cn for frequencies)
 python3 tools/build_mozc_ja_kana.py    # → ja_kana.tsv  (from Mozc)
 python3 tools/build_stroke_dict.py     # → stroke.tsv   (needs pinyin.tsv for freq)
 python3 tools/build_cangjie_dict.py    # → cangjie.tsv  (from Unihan)
@@ -59,8 +67,9 @@ since CC-CEDICT has no frequencies either. Single characters are scored per
 reading from the corpus words that contain them, so 议 and 际 — rare alone,
 everywhere inside words — rank where they belong. Before 2026-10-12 the script
 reseeded from its own previous output and otherwise ranked by line position in
-CC-CEDICT, which left 齐 113th under `qi` (issue #633). `stroke.tsv` still
-carries frequencies copied from that older `pinyin.tsv` until it is rebuilt.
+CC-CEDICT, which left 齐 113th under `qi` (issue #633); that output is the
+frozen `pinyin.tsv`. `stroke.tsv` still carries frequencies copied from it
+until it is rebuilt.
 
 `build_jyutping_dict.py` also needs a local file as well as
 its downloads: neither Cantonese source ships frequencies, so it reads
@@ -71,7 +80,7 @@ like before 2026-07-27.
 
 ## Attribution
 
-- **`pinyin.tsv`**: CC-CEDICT data is redistributed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) with attribution to the CC-CEDICT project. Frequencies derive from the `zh_cn` frequency list in [`data/`](../data) ([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords), OpenSubtitles 2018, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)).
+- **`pinyin_v2.tsv`, `pinyin.tsv`**: CC-CEDICT data is redistributed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) with attribution to the CC-CEDICT project. Frequencies derive from the `zh_cn` frequency list in [`data/`](../data) ([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords), OpenSubtitles 2018, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)).
 - **`ja_kana.tsv`**: Google Mozc dictionary data (`dictionary_oss`) is redistributed under the [BSD 3-Clause License](LICENSE_mozc.txt).
 - **`stroke.tsv`**: Derived from [yefeijiang/Chinese-characters-code-table](https://github.com/yefeijiang/Chinese-characters-code-table) by FeiJiang Ye, licensed under the [BSD 2-Clause License](LICENSE_stroke.txt).
 - **`cangjie.tsv`**: Derived from the [Unicode Unihan Database](https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip), licensed under the [Unicode License V3](LICENSE_cangjie.txt).
