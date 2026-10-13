@@ -37,7 +37,7 @@ CJK = ROOT / "cjk"
 # for the ones that pinned it before the 2026-10 rescore. Each version installs
 # the one it knows and passes over the other.
 CJK_BY_FOLDER = {
-    "zh": ["pinyin_v2.tsv", "pinyin.tsv", "stroke.tsv", "cangjie.tsv", "s2t_phrases.txt"],
+    "zh": ["pinyin_v2.tsv", "pinyin.tsv", "pinyin_ngrams.tsv", "stroke.tsv", "cangjie.tsv", "s2t_phrases.txt"],
     "ja": ["ja_kana.tsv"],
     "yue": ["jyutping.tsv", "s2t_phrases.txt"],
 }

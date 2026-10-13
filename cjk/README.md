@@ -14,6 +14,7 @@ header comments.
 | File | Format | Rows / size | Source | License |
 |---|---|---|---|---|
 | `pinyin_v2.tsv` | `reading⇥word⇥freq` — toneless concatenated Pinyin (lowercase ASCII) → Simplified Hanzi | ~121.4k · 2.6 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict); frequencies from [`data/zh_cn`](../data/zh_cn) | CC BY-SA 4.0 |
+| `pinyin_ngrams.tsv` | `word⇥count` and `word⇥word⇥count` — how often each pinyin-pack word occurs and which follows which, for ranking whole readings (`wbxh` → 我不喜欢). Not a reading table; fetched with `pinyin_v2.tsv` | 84.6k words, 700k pairs · 11 MB | [OpenSubtitles 2018](https://opus.nlpl.eu/OpenSubtitles/corpus/version/OpenSubtitles) via OPUS (the corpus behind `data/zh_cn`) and the [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/en/download/Chinese) `zho-cn_web_2015_1M` + `zho_news_2020_300K`; split into words with `pinyin_v2.tsv`'s vocabulary | counts only; Leipzig CC BY 4.0 |
 | `pinyin.tsv` | The same, before the 2026-10 rescore. Frozen: app versions before it pin these exact bytes, so it is never rebuilt in place | ~120.6k · 2.4 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict) | CC BY-SA 4.0 |
 | `ja_kana.tsv` | `reading⇥word⇥freq` — hiragana reading → kanji/kana surface | ~1.08M · 40 MB | [Google Mozc](https://github.com/google/mozc) OSS dictionary (`dictionary_oss`) | BSD 3-Clause |
 | `stroke.tsv` | `strokeCode⇥hanzi⇥freq` — 1–5 stroke-class sequence → Simplified Hanzi | ~20.9k · 445 KB | [yefeijiang/Chinese-characters-code-table](https://github.com/yefeijiang/Chinese-characters-code-table); frequencies from CC-CEDICT ordering | BSD 2-Clause |
@@ -36,6 +37,7 @@ app's catalog moves to the new name in the same release.
 
 ```
 pinyin_v2.tsv 2586937  0c572b5f5699378beb0eab5ec81cf79bb277e0f100d3c944d8969b7445b1a0c9
+pinyin_ngrams.tsv 11036820  30c0c614ac0576379407b0e519615653a4be5939590a795dae7074ce960e30bf
 pinyin.tsv    2489699  8baab4c758499272e36dba4bda4253317a4f93bb88bcf386ea86196c50d73715
 ja_kana.tsv  41531397  189214b81968c857d7cb020c52fc087ee44918ab28534194f79ea66f45c17a70
 stroke.tsv     445573  87d790c976b28e54107aef1af4ea3cea6e608500de0bcb3c01af7d8f1f8c52e8
@@ -56,6 +58,21 @@ python3 tools/build_stroke_dict.py     # → stroke.tsv   (needs pinyin.tsv for 
 python3 tools/build_cangjie_dict.py    # → cangjie.tsv  (from Unihan)
 python3 tools/build_jyutping_dict.py   # → jyutping.tsv (from rime-cantonese & CC-Canto; reads data/zh_tw for frequencies)
 ```
+
+`pinyin_ngrams.tsv` needs its text downloaded first — neither source is
+fetched by the script, since the files are large (170 MB and 550 MB packed):
+
+```bash
+curl -O https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2018/mono/zh_cn.txt.gz
+curl -O https://downloads.wortschatz-leipzig.de/corpora/zho-cn_web_2015_1M.tar.gz   # then untar
+curl -O https://downloads.wortschatz-leipzig.de/corpora/zho_news_2020_300K.tar.gz   # then untar
+python3 tools/build_pinyin_ngrams.py --corpus zh_cn.txt.gz \
+    --corpus zho-cn_web_2015_1M/zho-cn_web_2015_1M-sentences.txt \
+    --corpus zho_news_2020_300K/zho_news_2020_300K-sentences.txt   # → pinyin_ngrams.tsv, ~6 min on 8 cores
+```
+
+It splits each run of Hanzi into words with `pinyin_v2.tsv`'s own vocabulary,
+so rebuild it after a new pinyin pack (and publish it under a new name too).
 
 `s2t_phrases.txt` is built from the app repository instead, by
 `scripts/update-opencc.py`, because the same run refreshes the small OpenCC
