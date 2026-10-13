@@ -16,6 +16,7 @@ header comments.
 | `pinyin_v2.tsv` | `reading⇥word⇥freq` — toneless concatenated Pinyin (lowercase ASCII) → Simplified Hanzi | ~121.4k · 2.6 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict); frequencies from [`data/zh_cn`](../data/zh_cn) | CC BY-SA 4.0 |
 | `pinyin_ngrams.tsv` | `word⇥count` and `word⇥word⇥count` — how often each pinyin-pack word occurs and which follows which, for ranking whole readings (`wbxh` → 我不喜欢). Not a reading table; fetched with `pinyin_v2.tsv` | 84.6k words, 700k pairs · 11 MB | [OpenSubtitles 2018](https://opus.nlpl.eu/OpenSubtitles/corpus/version/OpenSubtitles) via OPUS (the corpus behind `data/zh_cn`) and the [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/en/download/Chinese) `zho-cn_web_2015_1M` + `zho_news_2020_300K`; split into words with `pinyin_v2.tsv`'s vocabulary | counts only; Leipzig CC BY 4.0 |
 | `eval/pinyin_eval.tsv` | `pinyin⇥initials⇥hanzi⇥source` — held-out clauses for scoring the Pinyin decoder (full reading and initials-only). Not fetched by the app | 3,000 rows (1,500 Tatoeba, 1,500 Leipzig) · 186 KB | [Tatoeba](https://tatoeba.org) Mandarin (`cmn`) sentences and Leipzig `zho_wikipedia_2018_10K`, neither of which either pinyin pack was counted from | CC BY 2.0 FR / CC BY 4.0 |
+| `pinyin_ngrams_v2.tsv` | Same format as `pinyin_ngrams.tsv`, which it contains unchanged, plus 500k word pairs and 8.1k words from the 万象 grammar model | 92.8k words, 1.2M pairs · 19 MB | `pinyin_ngrams.tsv` + [RIME-LMDG](https://github.com/amzxyz/RIME-LMDG) `wanxiang-lts-zh-hans.gram` | counts only; Leipzig and 万象 CC BY 4.0 |
 | `pinyin.tsv` | The same, before the 2026-10 rescore. Frozen: app versions before it pin these exact bytes, so it is never rebuilt in place | ~120.6k · 2.4 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict) | CC BY-SA 4.0 |
 | `ja_kana.tsv` | `reading⇥word⇥freq` — hiragana reading → kanji/kana surface | ~1.08M · 40 MB | [Google Mozc](https://github.com/google/mozc) OSS dictionary (`dictionary_oss`) | BSD 3-Clause |
 | `stroke.tsv` | `strokeCode⇥hanzi⇥freq` — 1–5 stroke-class sequence → Simplified Hanzi | ~20.9k · 445 KB | [yefeijiang/Chinese-characters-code-table](https://github.com/yefeijiang/Chinese-characters-code-table); frequencies from CC-CEDICT ordering | BSD 2-Clause |
@@ -39,6 +40,7 @@ app's catalog moves to the new name in the same release.
 ```
 pinyin_v2.tsv 2586937  0c572b5f5699378beb0eab5ec81cf79bb277e0f100d3c944d8969b7445b1a0c9
 pinyin_ngrams.tsv 11036820  30c0c614ac0576379407b0e519615653a4be5939590a795dae7074ce960e30bf
+pinyin_ngrams_v2.tsv 19166702  542fde43028bfead594e4f30f317bb2f8d6f581454a4a802c626bcf0dc93f918
 pinyin.tsv    2489699  8baab4c758499272e36dba4bda4253317a4f93bb88bcf386ea86196c50d73715
 ja_kana.tsv  41531397  189214b81968c857d7cb020c52fc087ee44918ab28534194f79ea66f45c17a70
 stroke.tsv     445573  87d790c976b28e54107aef1af4ea3cea6e608500de0bcb3c01af7d8f1f8c52e8
@@ -74,6 +76,27 @@ python3 tools/build_pinyin_ngrams.py --corpus zh_cn.txt.gz \
 
 It splits each run of Hanzi into words with `pinyin_v2.tsv`'s own vocabulary,
 so rebuild it after a new pinyin pack (and publish it under a new name too).
+
+`pinyin_ngrams_v2.tsv` adds the [万象 grammar model](https://github.com/amzxyz/RIME-LMDG)
+(a RIME octagram `.gram` file) to `pinyin_ngrams.tsv`. A small C program lists
+the model's 61M keys; the Python tool splits each with `pinyin_v2.tsv`'s
+vocabulary, keeps the keys that are one word or two, and rescales their values
+onto the v1 counts per class of word lengths:
+
+```bash
+curl -LO https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram   # 398 MB
+clang -O2 -o /tmp/dump_rime_gram tools/dump_rime_gram.c -lpthread
+mkdir -p /tmp/gram && /tmp/dump_rime_gram wanxiang-lts-zh-hans.gram /tmp/gram/part 8 && cat /tmp/gram/part.* > /tmp/gram.tsv   # 2.6 GB, ~20 s
+python3 tools/build_pinyin_ngrams_v2.py --gram-tsv /tmp/gram.tsv --work /tmp/gram-work   # → pinyin_ngrams_v2.tsv, ~10 min on 8 cores
+```
+
+The model's values are not counts: they grow ~4.2 (×65) per key character,
+keys of five or more characters mostly sit at its ceiling, and within a class
+they agree with v1 only loosely (Spearman ≈ 0.3 for pairs, 0.76 for
+two-character words). Only classes that agree at all are used — pairs of one-
+and two-character words, two- and three-character words — and the tool prints
+each class's offset and correlation. The release tag is `LTS` and moves; the
+build above used sha256 `d26da3d6…0adc12bd0` (see `LICENSE_wanxiang.txt`).
 
 `eval/pinyin_eval.tsv` is a test set, not a pack: each row is a Simplified
 clause, the toneless reading that should decode to it, its initials (zh/ch/sh
@@ -124,6 +147,7 @@ like before 2026-07-27.
 - **`stroke.tsv`**: Derived from [yefeijiang/Chinese-characters-code-table](https://github.com/yefeijiang/Chinese-characters-code-table) by FeiJiang Ye, licensed under the [BSD 2-Clause License](LICENSE_stroke.txt).
 - **`cangjie.tsv`**: Derived from the [Unicode Unihan Database](https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip), licensed under the [Unicode License V3](LICENSE_cangjie.txt).
 - **`jyutping.tsv`**: Derived from [rime-cantonese](https://github.com/rime/rime-cantonese) (by CanCLID, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) and [CC-Canto](https://cantonese.org/) (by Pleco Inc., licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)). See [LICENSE_jyutping.txt](LICENSE_jyutping.txt). Frequencies, and the generated rows covering standard vocabulary neither Cantonese source lists, additionally derive from the `zh_tw` frequency list in [`data/`](../data) ([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords), OpenSubtitles 2018, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)).
+- **`pinyin_ngrams_v2.tsv`**: Everything in `pinyin_ngrams.tsv` (above), plus counts derived from RIME-LMDG / 万象语法模型 by amzxyz, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), https://github.com/amzxyz/RIME-LMDG. See [LICENSE_wanxiang.txt](LICENSE_wanxiang.txt).
 - **`eval/pinyin_eval.tsv`**: Sentences from [Tatoeba](https://tatoeba.org) (Mandarin, `cmn`), by Tatoeba contributors, licensed under [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/), and from the [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/en/download/Chinese) `zho_wikipedia_2018_10K` (D. Goldhahn, T. Eckart & U. Quasthoff: Building Large Monolingual Dictionaries at the Leipzig Corpora Collection: From 100 to 200 Languages. LREC 2012), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Cut into clauses and annotated with readings from `pinyin_v2.tsv`.
 - **`s2t_phrases.txt`**: Copied from the dictionaries of [OpenCC](https://github.com/BYVoid/OpenCC) (Open Chinese Convert) 1.4.2, Copyright Carbo Kuo and OpenCC contributors, licensed under the [Apache License 2.0](LICENSE_opencc.txt). The rows from `STPhrases_GeneratedFromRegionalPhrases` are regenerated the way OpenCC's build does it, from the keys of its `TWPhrases` and `HKPhrases`.
 - **`jyutping_syllables.txt`**: Derived from [lshk-org/jyutping-table](https://github.com/lshk-org/jyutping-table) by the Linguistic Society of Hong Kong (LSHK), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

@@ -1,0 +1,16 @@
+pinyin_ngrams_v2.tsv contains word-pair and word counts derived from:
+
+  RIME-LMDG / 万象语法模型 by amzxyz, CC BY 4.0, https://github.com/amzxyz/RIME-LMDG
+  File: wanxiang-lts-zh-hans.gram (release "LTS", 398,357,548 bytes,
+  sha256 d26da3d6fe567bcf4aad8790475356997d8bc0886b087b292c5063c0adc12bd0, fetched 2026-10-13)
+
+Licensed under the Creative Commons Attribution 4.0 International License:
+https://creativecommons.org/licenses/by/4.0/
+
+Changes: the model's keys were split into words with the vocabulary of
+pinyin_v2.tsv, the two-word and one-word keys kept, their values rescaled onto
+the counts of pinyin_ngrams.tsv, and merged with that file
+(tools/build_pinyin_ngrams_v2.py). The .gram file format was read with
+reference to librime-octagram (BSD-3-Clause, https://github.com/lotem/librime-octagram)
+and darts-clone (BSD-2-Clause, https://github.com/s-yata/darts-clone); no code
+from either is included.
