@@ -15,6 +15,7 @@ header comments.
 |---|---|---|---|---|
 | `pinyin_v2.tsv` | `reading⇥word⇥freq` — toneless concatenated Pinyin (lowercase ASCII) → Simplified Hanzi | ~121.4k · 2.6 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict); frequencies from [`data/zh_cn`](../data/zh_cn) | CC BY-SA 4.0 |
 | `pinyin_ngrams.tsv` | `word⇥count` and `word⇥word⇥count` — how often each pinyin-pack word occurs and which follows which, for ranking whole readings (`wbxh` → 我不喜欢). Not a reading table; fetched with `pinyin_v2.tsv` | 84.6k words, 700k pairs · 11 MB | [OpenSubtitles 2018](https://opus.nlpl.eu/OpenSubtitles/corpus/version/OpenSubtitles) via OPUS (the corpus behind `data/zh_cn`) and the [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/en/download/Chinese) `zho-cn_web_2015_1M` + `zho_news_2020_300K`; split into words with `pinyin_v2.tsv`'s vocabulary | counts only; Leipzig CC BY 4.0 |
+| `eval/pinyin_eval.tsv` | `pinyin⇥initials⇥hanzi⇥source` — held-out clauses for scoring the Pinyin decoder (full reading and initials-only). Not fetched by the app | 3,000 rows (1,500 Tatoeba, 1,500 Leipzig) · 186 KB | [Tatoeba](https://tatoeba.org) Mandarin (`cmn`) sentences and Leipzig `zho_wikipedia_2018_10K`, neither of which either pinyin pack was counted from | CC BY 2.0 FR / CC BY 4.0 |
 | `pinyin.tsv` | The same, before the 2026-10 rescore. Frozen: app versions before it pin these exact bytes, so it is never rebuilt in place | ~120.6k · 2.4 MB | [CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cc-cedict) | CC BY-SA 4.0 |
 | `ja_kana.tsv` | `reading⇥word⇥freq` — hiragana reading → kanji/kana surface | ~1.08M · 40 MB | [Google Mozc](https://github.com/google/mozc) OSS dictionary (`dictionary_oss`) | BSD 3-Clause |
 | `stroke.tsv` | `strokeCode⇥hanzi⇥freq` — 1–5 stroke-class sequence → Simplified Hanzi | ~20.9k · 445 KB | [yefeijiang/Chinese-characters-code-table](https://github.com/yefeijiang/Chinese-characters-code-table); frequencies from CC-CEDICT ordering | BSD 2-Clause |
@@ -74,6 +75,27 @@ python3 tools/build_pinyin_ngrams.py --corpus zh_cn.txt.gz \
 It splits each run of Hanzi into words with `pinyin_v2.tsv`'s own vocabulary,
 so rebuild it after a new pinyin pack (and publish it under a new name too).
 
+`eval/pinyin_eval.tsv` is a test set, not a pack: each row is a Simplified
+clause, the toneless reading that should decode to it, its initials (zh/ch/sh
+as z/c/s) and where it came from. Its text is held out on purpose, so a score
+on it says how well the decoder ranks, not how much of its own training text it
+remembers. Clauses are 2–14 Hanzi, cut at punctuation, kept only when
+`pinyin_v2.tsv`'s vocabulary covers every character, read with each word's
+commonest reading; sentences with any Traditional-only character (by the app's
+OpenCC `s2t.txt`) are dropped. Sampling is seeded (580), so a rebuild from the
+same downloads is byte-identical:
+
+```bash
+curl -O https://downloads.tatoeba.org/exports/per_language/cmn/cmn_sentences.tsv.bz2
+curl -O https://downloads.wortschatz-leipzig.de/corpora/zho_wikipedia_2018_10K.tar.gz   # then untar
+python3 tools/build_pinyin_eval.py --tatoeba cmn_sentences.tsv.bz2 \
+    --leipzig zho_wikipedia_2018_10K/zho_wikipedia_2018_10K-sentences.txt   # → eval/pinyin_eval.tsv
+```
+
+It reads `s2t.txt` and `pinyin_syllables.txt` from the app checkout beside this
+one (`--app` or `$WMKB_APP` to point elsewhere). Tatoeba's export grows daily,
+so a later download samples different sentences.
+
 `s2t_phrases.txt` is built from the app repository instead, by
 `scripts/update-opencc.py`, because the same run refreshes the small OpenCC
 tables the APK bundles next to it. It writes here when this checkout sits
@@ -102,6 +124,7 @@ like before 2026-07-27.
 - **`stroke.tsv`**: Derived from [yefeijiang/Chinese-characters-code-table](https://github.com/yefeijiang/Chinese-characters-code-table) by FeiJiang Ye, licensed under the [BSD 2-Clause License](LICENSE_stroke.txt).
 - **`cangjie.tsv`**: Derived from the [Unicode Unihan Database](https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip), licensed under the [Unicode License V3](LICENSE_cangjie.txt).
 - **`jyutping.tsv`**: Derived from [rime-cantonese](https://github.com/rime/rime-cantonese) (by CanCLID, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) and [CC-Canto](https://cantonese.org/) (by Pleco Inc., licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)). See [LICENSE_jyutping.txt](LICENSE_jyutping.txt). Frequencies, and the generated rows covering standard vocabulary neither Cantonese source lists, additionally derive from the `zh_tw` frequency list in [`data/`](../data) ([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords), OpenSubtitles 2018, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)).
+- **`eval/pinyin_eval.tsv`**: Sentences from [Tatoeba](https://tatoeba.org) (Mandarin, `cmn`), by Tatoeba contributors, licensed under [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/), and from the [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/en/download/Chinese) `zho_wikipedia_2018_10K` (D. Goldhahn, T. Eckart & U. Quasthoff: Building Large Monolingual Dictionaries at the Leipzig Corpora Collection: From 100 to 200 Languages. LREC 2012), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Cut into clauses and annotated with readings from `pinyin_v2.tsv`.
 - **`s2t_phrases.txt`**: Copied from the dictionaries of [OpenCC](https://github.com/BYVoid/OpenCC) (Open Chinese Convert) 1.4.2, Copyright Carbo Kuo and OpenCC contributors, licensed under the [Apache License 2.0](LICENSE_opencc.txt). The rows from `STPhrases_GeneratedFromRegionalPhrases` are regenerated the way OpenCC's build does it, from the keys of its `TWPhrases` and `HKPhrases`.
 - **`jyutping_syllables.txt`**: Derived from [lshk-org/jyutping-table](https://github.com/lshk-org/jyutping-table) by the Linguistic Society of Hong Kong (LSHK), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
