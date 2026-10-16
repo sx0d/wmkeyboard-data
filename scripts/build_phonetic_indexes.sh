@@ -8,6 +8,10 @@
 # would build on a phone over the same download. The fold code calls the app's
 # Rust engine, so its host library is built first (needs cargo).
 #
+# Bangla's table carries the ranking of the app's bundled list
+# (app/dictionaries-src/bn.txt), so it is rebuilt when that changes too, under
+# the new name the app's bumped BengaliPhoneticIndex.REVISION gives it.
+#
 # Rerun whenever a <lang>_full.txt.gz changes. When the app bumps
 # PhoneticTableBuilder.VERSION or a fold's REVISION the file name changes too:
 # the new tables are written beside the old ones, which stay for the app
@@ -24,7 +28,7 @@ APP="$(cd "${1:-$ROOT/../WMKeyboard}" && pwd)"
 shift || true
 LANGS=("$@")
 if [ ${#LANGS[@]} -eq 0 ]; then
-    LANGS=(hi ur mr gu pa or ta te kn ml fa ar)
+    LANGS=(hi ur mr gu pa or ta te kn ml fa ar bn as)
 fi
 STUDIO="/Applications/Android Studio.app/Contents"
 KOTLINC="${KOTLINC:-$STUDIO/plugins/Kotlin/kotlinc}"
@@ -44,8 +48,8 @@ trap 'rm -rf "$WORK"' EXIT
 "$KOTLINC/bin/kotlinc" -nowarn -d "$WORK/classes" \
     "$SRC"/*.kt \
     "$TRIE/Trie.kt" "$TRIE/TrieWalker.kt" "$TRIE/TrieCompleter.kt" "$TRIE/PackedTrie.kt" \
-    "$TRIE/PackedTrieCodec.kt" "$TRIE/RankFloorCache.kt" "$TRIE/MappedTrie.kt" \
+    "$TRIE/PackedTrieCodec.kt" "$TRIE/RankFloorCache.kt" "$TRIE/MappedTrie.kt" "$TRIE/DictionaryLoader.kt" \
     "$ROOT/scripts/phonetic_index/PhoneticIndexTables.kt"
-"$JAVA_HOME/bin/java" -Xmx6g -Dwmkeyboard.engine.lib="$LIB" \
+"$JAVA_HOME/bin/java" -Xmx6g -Dwmkeyboard.engine.lib="$LIB" -Dwmkeyboard.app="$APP" \
     -cp "$WORK/classes:$KOTLINC/lib/kotlin-stdlib.jar" PhoneticIndexTablesKt \
     "$ROOT/data" "${LANGS[@]}"
