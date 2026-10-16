@@ -13,12 +13,14 @@ That lives separately.
 
 | Folder | What | Source |
 |---|---|---|
-| [`data/`](data/) | Per-language word-frequency lists (`<lang>/<lang>_full.txt.gz`), AOSP LatinIME's curated lists for 23 languages (`<lang>/<stem>_aosp.txt.gz`), optional offensive lists (`<lang_offensive.txt.gz`), and emoji search dictionaries (`<lang>/<lang>_emoji.json.gz`) across 160+ languages | Various (see [`data/README.md`](data/README.md)) |
+| [`data/`](data/) | Per-language word-frequency lists (`<lang>/<lang>_full.txt.gz`), AOSP LatinIME's curated lists for 23 languages (`<lang>/<stem>_aosp.txt.gz`), optional offensive lists (`<lang_offensive.txt.gz`), emoji search dictionaries (`<lang>/<lang>_emoji.json.gz`) across 160+ languages, and for the 12 phonetic languages the phonetic index built over the word list (`<lang>/<lang>_phonetic_v<n>r<n>.wmpi.gz`, rebuilt by [`scripts/build_phonetic_indexes.sh`](scripts/build_phonetic_indexes.sh)) | Various (see [`data/README.md`](data/README.md)) |
 | [`vocab/`](vocab/) | Vocabulary packs for the Vocabulary tool (`<lang>/<packId>.wmvocab.json.gz`) plus per-language translation sidecars, built from GRE word lists with Wiktionary and WordNet — see [`vocab/README.md`](vocab/README.md) | Wiktionary (kaikki.org), WordNet, CMUdict, FrequencyWords |
 | [`cjk/`](cjk/) | Chinese Pinyin (`pinyin.tsv`), Japanese kana (`ja_kana.tsv`) and Chinese stroke (`stroke.tsv`) conversion tables, the OpenCC phrase table behind Traditional output (`s2t_phrases.txt`), plus the build scripts under `cjk/tools/` — see [`cjk/README.md`](cjk/README.md) | CC-CEDICT, Mozc, BSD 2-Clause, OpenCC (Apache-2.0) |
 | [`keyman/`](keyman/) | Typing rules (`<id>/<id>.kmx.gz`) for the 812 Keyman keyboards WM Keyboard bundles that have any, read only when keyman.com can't serve them — see [`keyman/README.md`](keyman/README.md) | [Keyman](https://keyman.com/) packages, per-keyboard MIT |
 | [`fonts/`](fonts/) | Fonts the app fetches for a layout whose letters no phone font has: Klingon pIqaD — see [`fonts/README.md`](fonts/README.md) | Klingon pIqaD HaSta, SIL OFL 1.1 |
 | [`models/`](models/) | Small on-device networks the app fetches on demand, pinned by SHA-256: the sticker editor's background remover (`cutout/u2netp.tflite`, 4.6 MB) — see [`models/README.md`](models/README.md) | U²-Net (Qin et al.), Apache-2.0 |
+
+The phonetic indexes are binary tables the app memory-maps instead of folding the whole word list on the phone at every start. Each file name carries the table format and fold version it was written by; a new version is published under a new name beside the old one, which stays for the app versions that still fetch it.
 
 The `data/` word lists and emoji dictionaries are **gzip-compressed** (`<lang>_full.txt.gz`, `<lang>_offensive.txt.gz`, and `<lang>_emoji.json.gz`) so every
 file stays under GitHub's 100 MB limit — `gunzip` to get the plain text/JSON data. The `cjk/` tables are stored uncompressed.

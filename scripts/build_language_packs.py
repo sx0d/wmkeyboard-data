@@ -6,8 +6,10 @@
 Each pack is `wmkb-lang-<folder>.zip` and holds everything WM Keyboard would
 otherwise download for the languages in that folder: word lists
 (`<code>_full.txt.gz`, `<code>_aosp.txt.gz`, the romanized ones), word pairs
-(`<code>_bigrams.txt.gz`, `<code>_trigrams.txt.gz`) and emoji names
-(`<code>_emoji.json.gz`). Chinese, Japanese and Cantonese also carry their
+(`<code>_bigrams.txt.gz`, `<code>_trigrams.txt.gz`), emoji names
+(`<code>_emoji.json.gz`) and, for the phonetic languages, the phonetic index
+built over the word list (`<code>_phonetic_v<n>r<n>.wmpi.gz`, every version
+still in the folder, since each app version installs the one it reads). Chinese, Japanese and Cantonese also carry their
 conversion dictionaries from cjk/. The app's "Import" on a language's screen
 installs a pack as it is, recognising each file by its name, so a phone with
 no internet (or a build with no internet permission) gets the same data a
@@ -60,7 +62,7 @@ def wanted(path: Path) -> bool:
         return False
     if "_offensive" in name:
         return False
-    return name.endswith((".txt.gz", ".json.gz"))
+    return name.endswith((".txt.gz", ".json.gz", ".wmpi.gz"))
 
 
 def add(archive: zipfile.ZipFile, source: Path, arcname: str) -> None:
