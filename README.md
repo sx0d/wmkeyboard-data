@@ -15,6 +15,7 @@ That lives separately.
 |---|---|---|
 | [`data/`](data/) | Per-language word-frequency lists (`<lang>/<lang>_full.txt.gz`), AOSP LatinIME's curated lists for 23 languages (`<lang>/<stem>_aosp.txt.gz`), optional offensive lists (`<lang_offensive.txt.gz`), emoji search dictionaries (`<lang>/<lang>_emoji.json.gz`) across 160+ languages, and for the 14 phonetic languages the phonetic index built over the word list (`<lang>/<lang>_phonetic_v<n>r<n>.wmpi.gz`, rebuilt by [`scripts/build_phonetic_indexes.sh`](scripts/build_phonetic_indexes.sh)) | Various (see [`data/README.md`](data/README.md)) |
 | [`vocab/`](vocab/) | Vocabulary packs for the Vocabulary tool (`<lang>/<packId>.wmvocab.json.gz`) plus per-language translation sidecars, built from GRE word lists with Wiktionary and WordNet — see [`vocab/README.md`](vocab/README.md) | Wiktionary (kaikki.org), WordNet, CMUdict, FrequencyWords |
+| [`dictionary/`](dictionary/) | Offline English dictionaries for the Dictionary tool (`<lang>/<id>.wmdict.gz`): Open English WordNet and a common-words cut of Wiktionary, sorted one line per headword so the app binary-searches the file on disk — see [`dictionary/README.md`](dictionary/README.md) | Open English WordNet 2024 (CC BY 4.0), Wiktionary via kaikki.org (CC BY-SA 4.0, GFDL) |
 | [`cjk/`](cjk/) | Chinese Pinyin (`pinyin.tsv`), Japanese kana (`ja_kana.tsv`) and Chinese stroke (`stroke.tsv`) conversion tables, the OpenCC phrase table behind Traditional output (`s2t_phrases.txt`), plus the build scripts under `cjk/tools/` — see [`cjk/README.md`](cjk/README.md) | CC-CEDICT, Mozc, BSD 2-Clause, OpenCC (Apache-2.0) |
 | [`keyman/`](keyman/) | Typing rules (`<id>/<id>.kmx.gz`) for the 812 Keyman keyboards WM Keyboard bundles that have any, read only when keyman.com can't serve them — see [`keyman/README.md`](keyman/README.md) | [Keyman](https://keyman.com/) packages, per-keyboard MIT |
 | [`fonts/`](fonts/) | Fonts the app fetches for a layout whose letters no phone font has: Klingon pIqaD — see [`fonts/README.md`](fonts/README.md) | Klingon pIqaD HaSta, SIL OFL 1.1 |
@@ -51,6 +52,13 @@ file stays under GitHub's 100 MB limit — `gunzip` to get the plain text/JSON d
   that folder's `LICENSE.md`. Only keyboards the Keyman API lists as MIT are
   mirrored. Keyman is a product of SIL Global; this project is not affiliated
   with it. See [`keyman/README.md`](keyman/README.md).
+
+- **`dictionary/`** — `oewn.wmdict.gz` is [Open English WordNet 2024](https://en-word.net/)
+  under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), cut to single words and re-encoded;
+  `wiktionary.wmdict.gz` is English Wiktionary text via [kaikki.org](https://kaikki.org/) under
+  [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) and the GFDL, cut to common single words
+  and a few senses each. Both files name their source and licence in their header; see
+  [`dictionary/README.md`](dictionary/README.md).
 
 - **`vocab/`** — definitions, examples and translations are Wiktionary text via
   [kaikki.org](https://kaikki.org/) under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/),

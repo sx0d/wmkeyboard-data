@@ -7,3 +7,6 @@ __pycache__
 
 # Vocabulary build cache (kaikki fetches, zipf table)
 /vocab/cache/
+
+# Offline dictionary sources (OEWN XML, kaikki cut)
+/dictionary/cache/

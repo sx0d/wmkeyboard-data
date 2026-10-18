@@ -17,3 +17,17 @@ avrodict.js) as data/bn/bn_avro_dictionary.txt.gz:
   Licensed under the Mozilla Public License 1.1; see
   data/LICENSE-AVRO-MPL-1.1.txt. Only the encoding changed; data/README.md
   says how.
+
+The offline dictionaries under dictionary/ are derived works of:
+
+  Open English WordNet 2024, https://en-word.net/
+  Licensed under the Creative Commons Attribution 4.0 International
+  licence (CC BY 4.0). dictionary/en/oewn.wmdict.gz keeps its single-word
+  lemmas, definitions, first examples, synonyms, antonyms and
+  pronunciations, re-encoded by scripts/build_dictionary_packs.py.
+
+  English Wiktionary, https://en.wiktionary.org/, as extracted by
+  kaikki.org (wiktextract). Licensed under CC BY-SA 4.0 and the GNU Free
+  Documentation License. dictionary/en/wiktionary.wmdict.gz is a cut of
+  it (common single words, a few senses each, shortened examples) and is
+  distributed under the same terms.
