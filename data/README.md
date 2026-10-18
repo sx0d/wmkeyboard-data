@@ -249,11 +249,11 @@ ends the n-gram instead of joining it.
 |---|---|---|---:|---:|
 | Hindi | `hi` | `hin-in_web_2015_1M` ×3, `hin_news_2022_1M` ×1 | 150,000 | 75,000 |
 | Urdu | `ur` | `urd-in_web_2015_100K` ×3, `urd_newscrawl_2016_1M` ×1 | 150,000 | 75,000 |
-| Marathi | `mr` | `mar-in_web_2015_300K` ×3, `mar_newscrawl_2016_1M` ×1 | 150,000 | 75,000 |
+| Marathi | `mr` | `mar-in_web_2015_300K` ×3, `mar_newscrawl_2016_1M` ×1 + Tatoeba `mar` ×3 | 150,000 | 75,000 |
 | Gujarati | `gu` | `guj_newscrawl_2016_300K` ×1, `guj_newscrawl_2011_300K` ×1 | 150,000 | 75,000 |
 | Punjabi | `pa` | `pan-in_web_2015_100K` ×3, `pan_wikipedia_2021_300K` ×1 | 150,000 | 75,000 |
 | Odia | `or` | `ori_wikipedia_2021_100K` ×1 | 93,108 | 32,141 |
-| Assamese | `as` | `asm_wikipedia_2021_100K` ×1 | 111,107 | 46,719 |
+| Assamese | `as` | `asm_wikipedia_2021_100K` ×1 + Tatoeba `asm` ×3 | 126,142 | 57,626 |
 | Tamil | `ta` | `tam-lk_web_2020_1M` ×3, `tam_newscrawl_2011_1M` ×1 | 150,000 | 75,000 |
 | Telugu | `te` | `tel_newscrawl_2011_300K` ×1, `tel_wikipedia_2021_300K` ×1, `tel_wikipedia_2016_300K` ×1, `tel_wikipedia_2014_300K` ×1 | 150,000 | 75,000 |
 | Kannada | `kn` | `kan_wikipedia_2021_300K` ×1, `kan_wikipedia_2016_300K` ×1, `kan_wikipedia_2011_300K` ×1 | 150,000 | 75,000 |
@@ -281,7 +281,7 @@ ends the n-gram instead of joining it.
 | Hebrew | `he` | `heb_news_2020_1M` ×1, `heb_wikipedia_2021_1M` ×1 | 150,000 | 75,000 |
 | Malay | `ms` | `msa-my_web_2013_1M` ×3, `msa_newscrawl_2016_300K` ×1 | 150,000 | 75,000 |
 | Swahili | `sw` | `swa_wikipedia_2021_100K` ×1, `swa_wikipedia_2016_100K` ×1 | 150,000 | 75,000 |
-| Tagalog | `tl` | `tgl_wikipedia_2021_100K` ×1, `tgl_wikipedia_2016_100K` ×1, `tgl_wikipedia_2014_100K` ×1 | 150,000 | 75,000 |
+| Tagalog | `tl` | `tgl_wikipedia_2021/2016/2014_100K` ×1 + Tatoeba `tgl` ×3 | 150,000 | 75,000 |
 | Nepali | `ne` | `nep-np_web_2015_1M` ×3, `nep_news_2020_300K` ×1 | 150,000 | 75,000 |
 | Sinhala | `si` | `sin_wikipedia_2021_100K` ×1, `sin_wikipedia_2016_100K` ×1, `sin_wikipedia_2014_100K` ×1, `sin_wikipedia_2011_100K` ×1 | 150,000 | 75,000 |
 | Azerbaijani | `az` | `aze_newscrawl_2013_1M` ×1, `aze_wikipedia_2021_1M` ×1 | 150,000 | 75,000 |
@@ -314,6 +314,209 @@ The memory counter packs a trigram into one 64-bit number, so it uses only the
 2,097,151 commonest words of a longer list (Hungarian, Finnish, Arabic and
 Turkish have more). The words it leaves out are each seen about once.
 
+### Tatoeba Sentence Corpus Word Pairs
+
+For 166 additional languages — including constructed languages (Esperanto, Toki
+Pona, Klingon, Lojban, Ido, Interlingua, Interlingue, Lingua Franca Nova, Volapük,
+Novial, Kotava, Quenya), classical languages (Latin, Gothic, Old English, Sanskrit),
+AOSP keyboard languages (Lithuanian, Latvian, Slovenian, Basque, Galician, etc.),
+and regional and indigenous languages across Europe, Africa, Asia, and the Americas —
+word bigram and trigram lists are built from the [Tatoeba sentence corpus](https://tatoeba.org/)
+([CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/) / CC0) using
+[`scripts/import_tatoeba_ngrams.py`](../scripts/import_tatoeba_ngrams.py).
+
+Tatoeba consists of short, human-translated conversational sentences, the exact
+register needed for phone keyboard prediction. Klingon (`tlh`) preserves
+phonemic casing and glottal stops (`tlhIngan`, 'e', 'ej'); Bengali/Assamese
+script handles NFC nukta decomposition; zero-width space (`\u200b`) in scripts like
+Khmer is treated as a word boundary; and all lists gate strictly against the
+repository's `<lang>_full.txt.gz` and `<lang>_aosp.txt.gz` vocabularies, so
+unknown words break the n-gram window and never produce phantom entries.
+
+In addition, all 50 existing language pair lists (including English, Russian,
+German, French, Spanish, Italian, Portuguese, Turkish, Dutch, Polish, Arabic,
+Hebrew, Hindi, Bengali, Assamese, Marathi, Tagalog, etc.) have been improved by
+blending Tatoeba conversational sentences (weighted ×3) into their corpus lists.
+
+| Language | Code | Tatoeba Code | Bigrams | Trigrams |
+|---|---|---|---:|---:|
+| Esperanto | `eo` | `epo` | 150,000 | 75,000 |
+| Lithuanian | `lt` | `lit` | 67,725 | 44,525 |
+| Kabyle | `kab` | `kab` | 66,130 | 68,844 |
+| Filipino | `fil` | `tgl` | 45,846 | 56,424 |
+| Macedonian | `mk` | `mkd` | 29,745 | 25,084 |
+| Interlingua | `ia` | `ina` | 27,230 | 21,349 |
+| Tatar | `tt` | `tat` | 25,853 | 10,257 |
+| Latin | `la` | `lat` | 23,317 | 9,145 |
+| Eastern Armenian | `hy` | `hye` | 19,691 | 12,421 |
+| Hausa | `ha` | `hau` | 17,142 | 9,745 |
+| Lingua Franca Nova | `lfn` | `lfn` | 16,828 | 15,364 |
+| Tigre | `tig` | `tig` | 14,255 | 5,448 |
+| Occitan | `oc` | `oci` | 12,007 | 6,502 |
+| Norwegian Bokmål | `no` | `nob` | 11,760 | 8,023 |
+| Lojban | `jbo` | `jbo` | 10,949 | 9,213 |
+| Low German (Low Saxon) | `nds` | `nds` | 10,729 | 6,977 |
+| Yiddish | `yi` | `yid` | 9,604 | 7,589 |
+| Toki Pona | `tok` | `tok` | 8,438 | 35,332 |
+| Icelandic | `is` | `isl` | 8,361 | 5,510 |
+| Latvian | `lv` | `lvs` | 8,036 | 3,568 |
+| Standard Moroccan Tamazight | `zgh` | `zgh` | 7,530 | 3,829 |
+| Klingon | `tlh` | `tlh` | 7,271 | 2,257 |
+| Low Saxon (Netherlands) | `nds_nl` | `nds` | 7,091 | 4,804 |
+| Norwegian Nynorsk | `nn` | `nno` | 6,557 | 4,176 |
+| Ido | `io` | `ido` | 6,322 | 3,512 |
+| Belarusian (Taraškievica) | `be_x_old` | `bel` | 6,205 | 1,980 |
+| Belarusian | `be` | `bel` | 6,136 | 1,946 |
+| Galician | `gl` | `glg` | 6,089 | 2,355 |
+| Lingala | `ln` | `lin` | 5,312 | 2,143 |
+| Central Kurdish (Soranî) | `ckb` | `ckb` | 5,104 | 1,690 |
+| Interlingue | `ie` | `ile` | 4,824 | 3,594 |
+| Northern Kurdish (Kurmancî) | `ku` | `kmr` | 4,562 | 2,017 |
+| Breton | `br` | `bre` | 4,201 | 2,949 |
+| Santali | `sat` | `sat` | 2,920 | 1,474 |
+| Uyghur | `ug` | `uig` | 2,892 | 809 |
+| Afrikaans | `af` | `afr` | 2,840 | 1,569 |
+| Basque | `eu` | `eus` | 2,448 | 823 |
+| Estonian | `et` | `est` | 2,205 | 882 |
+| Turkmen | `tk` | `tuk` | 2,126 | 674 |
+| North Frisian | `frr` | `frr` | 1,858 | 671 |
+| Georgian | `ka` | `kat` | 1,817 | 425 |
+| Central Kanuri | `knc` | `knc` | 1,712 | 185 |
+| Irish | `ga` | `gle` | 1,686 | 916 |
+| Chavacano | `cbk` | `cbk` | 1,671 | 1,057 |
+| Central Dusun | `dtp` | `dtp` | 1,568 | 508 |
+| Cornish | `kw` | `cor` | 1,542 | 1,151 |
+| Slovenian | `sl` | `slv` | 1,532 | 489 |
+| Albanian | `sq` | `sqi` | 1,526 | 614 |
+| Ilocano | `ilo` | `ilo` | 1,275 | 537 |
+| Meadow Mari | `mhr` | `mhr` | 1,216 | 186 |
+| Mongolian | `mn` | `mon` | 1,192 | 332 |
+| Udmurt | `udm` | `udm` | 1,092 | 223 |
+| Kirundi | `rn` | `run` | 1,048 | 289 |
+| Kotava | `avk` | `avk` | 1,037 | 262 |
+| Ossetian | `os` | `oss` | 1,002 | 89 |
+| Welsh | `cy` | `cym` | 994 | 501 |
+| Volapük | `vo` | `vol` | 855 | 225 |
+| Ligurian | `lij` | `lij` | 846 | 327 |
+| Cebuano | `ceb` | `ceb` | 839 | 275 |
+| Scottish Gaelic | `gd` | `gla` | 794 | 471 |
+| Tigrinya | `ti` | `tir` | 779 | 83 |
+| Ladino | `lad` | `lad` | 721 | 320 |
+| Guarani | `gn` | `grn` | 670 | 151 |
+| Bosnian | `bs` | `bos` | 569 | 155 |
+| Luxembourgish | `lb` | `ltz` | 501 | 264 |
+| Avar | `av` | `ava` | 497 | 106 |
+| Piedmontese | `pms` | `pms` | 470 | 211 |
+| Maori | `mi` | `mri` | 435 | 263 |
+| Kapampangan | `pam` | `pam` | 428 | 160 |
+| Lower Sorbian | `dsb` | `dsb` | 421 | 129 |
+| Upper Sorbian | `hsb` | `hsb` | 392 | 95 |
+| Novial | `nov` | `nov` | 374 | 141 |
+| Waray | `war` | `war` | 370 | 112 |
+| Chuvash | `cv` | `chv` | 368 | 73 |
+| Egyptian Arabic | `arz` | `arz` | 360 | 91 |
+| Javanese | `jv` | `jav` | 332 | 91 |
+| Asturian | `ast` | `ast` | 289 | 70 |
+| Sundanese | `su` | `sun` | 273 | 56 |
+| Frisian | `fy` | `fry` | 258 | 69 |
+| Old English | `ang` | `ang` | 253 | 79 |
+| Picard | `pcd` | `pcd` | 248 | 75 |
+| Sundanese | `sun` | `sun` | 210 | 38 |
+| Silesian | `szl` | `szl` | 199 | 48 |
+| Kashubian | `csb` | `csb` | 197 | 60 |
+| Venetian | `vec` | `vec` | 178 | 88 |
+| Rohingya | `rhg` | `rhg` | 160 | 7 |
+| Faroese | `fo` | `fao` | 154 | 35 |
+| Sranan Tongo | `srn` | `srn` | 153 | 40 |
+| Swiss German | `gsw` | `gsw` | 149 | 30 |
+| Southern Altai | `alt` | `alt` | 144 | 19 |
+| Buryat | `bxr` | `bua` | 141 | 17 |
+| Kyrgyz | `ky` | `kir` | 132 | 35 |
+| Khmer | `km` | `khm` | 124 | 35 |
+| Crimean Tatar | `crh` | `crh` | 118 | 29 |
+| Veps | `vep` | `vep` | 118 | 27 |
+| Maltese | `mt` | `mlt` | 114 | 23 |
+| Gothic | `got` | `got` | 102 | 45 |
+| Bavarian | `bar` | `bar` | 101 | 29 |
+| Kalmyk | `xal` | `xal` | 101 | 6 |
+| Awadhi | `awa` | `awa` | 88 | 48 |
+| Latgalian | `ltg` | `ltg` | 83 | 9 |
+| Hawaiian | `haw` | `haw` | 80 | 49 |
+| Tetum | `tet` | `tet` | 77 | 52 |
+| Wayuu | `guc` | `guc` | 74 | 4 |
+| Yakut | `sah` | `sah` | 73 | 8 |
+| Bashkir | `ba` | `bak` | 67 | 20 |
+| Tok Pisin | `tpi` | `tpi` | 64 | 39 |
+| Luganda | `lg` | `lug` | 62 | 7 |
+| Mirandese | `mwl` | `mwl` | 60 | 17 |
+| Haitian Creole | `ht` | `hat` | 56 | 20 |
+| Erzya | `myv` | `myv` | 52 | 11 |
+| Iban | `iba` | `iba` | 51 | 13 |
+| Quenya | `qya` | `qya` | 50 | 23 |
+| Saraiki | `skr` | `skr` | 49 | 21 |
+| Saterland Frisian | `stq` | `stq` | 45 | 16 |
+| Amharic | `am` | `amh` | 44 | 11 |
+| Chamorro | `ch` | `cha` | 44 | 4 |
+| Emilian | `eml` | `egl` | 44 | 17 |
+| Northern Sami | `se` | `sme` | 42 | 7 |
+| Lezgi | `lez` | `lez` | 40 | 9 |
+| Colognian | `ksh` | `ksh` | 39 | 10 |
+| Banjar | `bjn` | `bjn` | 38 | 5 |
+| Ladin | `lld` | `lld` | 38 | 10 |
+| Papiamento | `pap` | `pap` | 31 | 11 |
+| Somali | `so` | `som` | 31 | 5 |
+| Yoruba | `yo` | `yor` | 31 | 5 |
+| Bambara | `bm` | `bam` | 30 | 3 |
+| Samoan | `sm` | `smo` | 28 | 11 |
+| Scots | `sco` | `sco` | 27 | 3 |
+| Aragonese | `an` | `arg` | 26 | 10 |
+| Quechua | `qu` | `que` | 26 | 7 |
+| Nahuatl | `nah` | `nah` | 25 | 2 |
+| Rusyn | `rue` | `rue` | 22 | 4 |
+| Tuvinian | `tyv` | `tyv` | 22 | 10 |
+| Extremaduran | `ext` | `ext` | 21 | 7 |
+| Pennsylvania German | `pdc` | `pdc` | 21 | 9 |
+| Bhojpuri | `bho` | `bho` | 18 | 5 |
+| Tumbuka | `tum` | `tum` | 18 | 3 |
+| Xhosa | `xh` | `xho` | 16 | 1 |
+| Pangasinan | `pag` | `pag` | 15 | 5 |
+| Sanskrit | `sa` | `san` | 15 | 0 |
+| Neapolitan | `nap` | `nap` | 14 | 2 |
+| Mingrelian | `xmf` | `xmf` | 13 | 3 |
+| Western Armenian | `hyw` | `hyw` | 12 | 2 |
+| Minangkabau | `min` | `min` | 12 | 1 |
+| Pashto | `ps` | `pus` | 12 | 5 |
+| Wolof | `wo` | `wol` | 12 | 5 |
+| Malagasy | `mg` | `mlg` | 11 | 2 |
+| Western Punjabi | `pnb` | `pnb` | 10 | 3 |
+| Tajik | `tg` | `tgk` | 10 | 0 |
+| Dhivehi | `div` | `div` | 9 | 2 |
+| Dhivehi | `dv` | `div` | 8 | 1 |
+| Kabardian | `kbd` | `kbd` | 8 | 1 |
+| Moroccan Arabic | `ary` | `ary` | 7 | 2 |
+| Corsican | `co` | `cos` | 7 | 3 |
+| Karakalpak | `kaa` | `kaa` | 7 | 3 |
+| Hill Mari | `mrj` | `mrj` | 7 | 1 |
+| Pipil | `ppl` | `ppl` | 6 | 1 |
+| Walloon | `wa` | `wln` | 5 | 0 |
+| Karachay-Balkar | `krc` | `krc` | 4 | 0 |
+| Zulu | `zu` | `zul` | 4 | 0 |
+| Gagauz | `gag` | `gag` | 3 | 0 |
+| Tashelhit | `shi` | `shi` | 3 | 1 |
+| Talysh | `tly` | `tly` | 3 | 0 |
+| Greenlandic | `kl` | `kal` | 2 | 0 |
+| Min Nan Chinese | `nan` | `nan` | 1 | 0 |
+
+To generate or blend word pairs from Tatoeba sentences:
+
+```sh
+# Generate standalone pairs:
+python3 scripts/import_tatoeba_ngrams.py --lang eo tok tlh la --tatoeba sentences.csv
+
+# Blend into existing pair lists with conversational weight 3:
+python3 scripts/import_tatoeba_ngrams.py --lang en es fr de hi bn as mr tl --blend --weight 3 --tatoeba sentences.csv
+```
+
 The romanized Bengali lists (`bn/bn_rom_*`) are a different thing entirely, and
 personal rather than corpus-built: see
 [`scripts/import_facebook_chats.py`](../scripts/import_facebook_chats.py).
@@ -333,6 +536,7 @@ Each dictionary retains the license of its original source.
 |---------|---------|
 | Most frequency lists | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
 | `*_bigrams`, `*_trigrams` built from the Leipzig Corpora Collection | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| `*_bigrams`, `*_trigrams` built or improved from Tatoeba | [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/) / CC0 ([Tatoeba](https://tatoeba.org/)) |
 | `ur` | [MIT](https://github.com/urduhack/urdu-words/blob/master/LICENSE) |
 | `bs` | Counts: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Spelling forms: [LGPL-3.0](https://github.com/ebukva/bs_BA/blob/master/license.txt), ebukva/bs_BA |
 | `si` | [MIT](https://github.com/kasunw22/sinhala-para-dict/blob/main/LICENSE) |

@@ -13,7 +13,7 @@ That lives separately.
 
 | Folder | What | Source |
 |---|---|---|
-| [`data/`](data/) | Per-language word-frequency lists (`<lang>/<lang>_full.txt.gz`), AOSP LatinIME's curated lists for 23 languages (`<lang>/<stem>_aosp.txt.gz`), optional offensive lists (`<lang_offensive.txt.gz`), emoji search dictionaries (`<lang>/<lang>_emoji.json.gz`) across 160+ languages, and for the 14 phonetic languages the phonetic index built over the word list (`<lang>/<lang>_phonetic_v<n>r<n>.wmpi.gz`, rebuilt by [`scripts/build_phonetic_indexes.sh`](scripts/build_phonetic_indexes.sh)) | Various (see [`data/README.md`](data/README.md)) |
+| [`data/`](data/) | Per-language word-frequency lists (`<lang>/<lang>_full.txt.gz`), next-word prediction pairs (`<lang>/<lang>_bigrams.txt.gz`, `<lang>/<lang>_trigrams.txt.gz`), AOSP LatinIME's curated lists for 23 languages (`<lang>/<stem>_aosp.txt.gz`), optional offensive lists (`<lang_offensive.txt.gz`), emoji search dictionaries (`<lang>/<lang>_emoji.json.gz`) across 160+ languages, and for the 14 phonetic languages the phonetic index built over the word list (`<lang>/<lang>_phonetic_v<n>r<n>.wmpi.gz`, rebuilt by [`scripts/build_phonetic_indexes.sh`](scripts/build_phonetic_indexes.sh)) | Various (see [`data/README.md`](data/README.md)) |
 | [`vocab/`](vocab/) | Vocabulary packs for the Vocabulary tool (`<lang>/<packId>.wmvocab.json.gz`) plus per-language translation sidecars, built from GRE word lists with Wiktionary and WordNet — see [`vocab/README.md`](vocab/README.md) | Wiktionary (kaikki.org), WordNet, CMUdict, FrequencyWords |
 | [`dictionary/`](dictionary/) | Offline English dictionaries for the Dictionary tool (`<lang>/<id>.wmdict.gz`): Open English WordNet and a common-words cut of Wiktionary, sorted one line per headword so the app binary-searches the file on disk — see [`dictionary/README.md`](dictionary/README.md) | Open English WordNet 2024 (CC BY 4.0), Wiktionary via kaikki.org (CC BY-SA 4.0, GFDL) |
 | [`cjk/`](cjk/) | Chinese Pinyin (`pinyin.tsv`), Japanese kana (`ja_kana.tsv`) and Chinese stroke (`stroke.tsv`) conversion tables, the OpenCC phrase table behind Traditional output (`s2t_phrases.txt`), plus the build scripts under `cjk/tools/` — see [`cjk/README.md`](cjk/README.md) | CC-CEDICT, Mozc, BSD 2-Clause, OpenCC (Apache-2.0) |
@@ -23,14 +23,15 @@ That lives separately.
 
 The phonetic indexes are binary tables the app memory-maps instead of folding the whole word list on the phone at every start. Each file name carries the table format and fold version it was written by; a new version is published under a new name beside the old one, which stays for the app versions that still fetch it.
 
-The `data/` word lists and emoji dictionaries are **gzip-compressed** (`<lang>_full.txt.gz`, `<lang>_offensive.txt.gz`, and `<lang>_emoji.json.gz`) so every
+The `data/` word lists, word pairs, and emoji dictionaries are **gzip-compressed** (`<lang>_full.txt.gz`, `<lang>_bigrams.txt.gz`, `<lang>_offensive.txt.gz`, and `<lang>_emoji.json.gz`) so every
 file stays under GitHub's 100 MB limit — `gunzip` to get the plain text/JSON data. The `cjk/` tables are stored uncompressed.
 
 
 ## Licensing & attribution
 
-- **`data/`** — the frequency word lists, offensive word lists, and emoji dictionaries are sourced from various
+- **`data/`** — the frequency word lists, word-pair prediction lists, offensive word lists, and emoji dictionaries are sourced from various
   open-source projects including Hermit Dave's FrequencyWords, the Leipzig Corpora Collection,
+  the [Tatoeba sentence corpus](https://tatoeba.org/) (CC BY 2.0 FR / CC0),
   [KDE kemoji](https://github.com/KDE/kemoji) / Unicode CLDR, and others. Frequency lists are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), MIT, Public Domain, or CC BY-SA 3.0. The `_aosp` lists are from AOSP LatinIME, Copyright (C) The Android Open Source Project, under the [Apache License 2.0](data/LICENSE-AOSP-APACHE-2.0.txt). Emoji dictionaries are derived from Unicode CLDR annotations & Unicode Emoji Data under the [Unicode License Agreement (v3)](https://www.unicode.org/license.txt) / [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). See [`data/README.md`](data/README.md)
   for the per-language attribution table and full licensing details.
 
