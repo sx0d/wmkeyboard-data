@@ -297,6 +297,7 @@ ends the n-gram instead of joining it.
 | Bulgarian | `bg` | `bul_news_2022_1M` ×1, `bul_wikipedia_2021_1M` ×1 | 150,000 | 75,000 |
 | Serbian | `sr` | `srp-rs_web_2016_1M` ×3, `srp_wikipedia_2021_1M` ×1 | 150,000 | 75,000 |
 | Croatian | `hr` | `hrv-hr_web_2015_1M` ×3, `hrv_news_2020_1M` ×1 | 150,000 | 75,000 |
+| Bosnian | `bs` | `bos_news_2020_300K` ×1, `bos_newscrawl_2015_300K` ×1, `bos_newscrawl_2011_300K` ×1, `bos_wikipedia_2021_300K` ×1 | 150,000 | 75,000 |
 | Catalan | `ca` | `cat_newscrawl_2016_1M` ×1, `cat_wikipedia_2021_1M` ×1 | 150,000 | 75,000 |
 
 The Leipzig corpus names change from release to release and the listing at
@@ -379,7 +380,7 @@ python3 scripts/import_tatoeba_words.py --sentences ota_sentences.tsv.bz2 --fold
 
 ### Tatoeba Sentence Corpus Word Pairs
 
-For 197 additional languages — including constructed languages (Esperanto, Toki
+For 196 additional languages — including constructed languages (Esperanto, Toki
 Pona, Klingon, Lojban, Ido, Interlingua, Interlingue, Lingua Franca Nova, Volapük,
 Novial, Kotava, Quenya), classical languages (Latin, Gothic, Old English, Sanskrit),
 AOSP keyboard languages (Lithuanian, Latvian, Slovenian, Basque, Galician, etc.),
@@ -485,7 +486,6 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Middle English | `enm` | `enm` | 654 | 379 |
 | Palauan | `pau` | `pau` | 622 | 423 |
 | Romani | `rom` | `rom` | 572 | 419 |
-| Bosnian | `bs` | `bos` | 569 | 155 |
 | Interslavic (Latin) | `isv_latn` | `isv` | 502 | 202 |
 | Luxembourgish | `lb` | `ltz` | 501 | 264 |
 | Avar | `av` | `ava` | 497 | 106 |
