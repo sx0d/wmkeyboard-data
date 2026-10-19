@@ -42,3 +42,13 @@ scripts/import_tatoeba_words.py) are derived works of:
   Licensed under Creative Commons Attribution 2.0 France (CC BY 2.0 FR)
   and CC0; contributed by the Tatoeba community.
 
+
+The word lists built by scripts/import_corpus_words.py (the languages
+data/README.md lists under "eBible and Glot500 Word Lists") count the words of:
+
+  eBible corpus, https://github.com/BibleNLP/ebible
+  Redistributable Bible translations, each under the licence recorded for
+  it in metadata/translations.csv.
+
+  Glot500-c, https://huggingface.co/datasets/cis-lmu/Glot500
+  A collection of openly licensed text; see the dataset card for each source.

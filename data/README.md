@@ -68,6 +68,8 @@ This repository redistributes and packages data from the following open-source p
 | [tahmid02016/bangla-wordlist](https://github.com/tahmid02016/bangla-wordlist) | `bn` |
 | [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/de) | `aa`, `af`, `ak`, `am`, `an`, `as`, `az`, `ba`, `be`, `bm`, `bo`, `br`, `ce`, `co`, `cv`, `cy`, `div`, `ee`, `eo`, `eu`, `ff`, `fo`, `fy`, `gl`, `gn`, `gu`, `gv`, `ha`, `hi`, `ht`, `hy`, `ia`, `ie`, `ig`, `ina`, `io`, `jv`, `ka`, `kg`, `ki`, `kk`, `kl`, `km`, `kn`, `koi`, `kok`, `ky`, `lg`, `li`, `ln`, `lo`, `lv`, `mn`, `mr`, `ms`, `mt`, `my`, `myv`, `nd`, `ne`, `nn`, `nr`, `nv`, `ny`, `oc`, `om`, `os`, `pa`, `ps`, `qu`, `rm`, `sco`, `se`, `sh`, `sna`, `so`, `ssw`, `st`, `sun`, `sw`, `te`, `tg`, `ti`, `tk`, `tl`, `tn`, `ts`, `tt`, `ug`, `uz`, `ve`, `vi`, `vo`, `wa`, `wo`, `xh`, `yi`, `yo`, `za`, `zu` |
 | [Tatoeba sentence corpus](https://tatoeba.org/), counted by [`scripts/import_tatoeba_words.py`](../scripts/import_tatoeba_words.py) | `arq`, `ber`, `bzt`, `ckt`, `dar`, `enm`, `fkv`, `gcf`, `gos`, `grc`, `hbo`, `hoc` (`hoc_latn`), `hrx`, `isv` (`isv_latn`), `kha`, `kzj`, `mus`, `nnb`, `nus`, `orv`, `ota` (`ota_full` and `ota_latn`), `pau`, `prg`, `rif`, `rn`, `rom`, `sdh`, `swc`, `swg`, `thv`, `ttq` |
+| [eBible corpus](https://github.com/BibleNLP/ebible) and [Glot500](https://huggingface.co/datasets/cis-lmu/Glot500), counted by [`scripts/import_corpus_words.py`](../scripts/import_corpus_words.py) | `acm`, `afb`, `ajp`, `aln`, `apc`, `arn`, `bba`, `bem`, `dgr`, `emp`, `kaa` (`kaa_latn`), `kac`, `kam`, `kek`, `kjh`, `knf`, `nch`, `ngu`, `nop`, `tgo`, `umb`, `uz` (`uz_cyrl`) |
+| Transliterated from the language's list in its other script by [`scripts/transliterate_wordlist.py`](../scripts/transliterate_wordlist.py) | `be_latn`, `bs_cyrl`, `kk_latn`, `sr_latn`, `zgh_latn` |
 | [Wikimedia data dumps](https://dumps.wikimedia.org/) | `ab`, `ace`, `ady`, `alt`, `ami`, `ang`, `ann`, `anp`, `arc`, `arz`, `atj`, `av`, `avk`, `awa`, `ay`, `azb`, `bar`, `bbc`, `bdr`, `be-tarask`, `bew`, `bh`, `bi`, `bik`, `bjn`, `blk`, `bol`, `bpy`, `btm`, `bxr`, `cbk`, `cbk-zam`, `cdo`, `ch`, `chr`, `chy`, `cr`, `crh`, `csb`, `cu`, `dag`, `dga`, `din`, `diq`, `dsb`, `dtp`, `dty`, `dv`, `dz`, `eml`, `ext`, `fat`, `fj`, `fon`, `frp`, `frr`, `fur`, `gag`, `gan`, `gcr`, `gd`, `glk`, `gom`, `gor`, `got`, `gpe`, `guc`, `gur`, `guw`, `hak`, `haw`, `hif`, `hsb`, `hyw`, `iba`, `igl`, `ik`, `inh`, `isv`, `iu`, `jam`, `kaa`, `kai`, `kaj`, `kbd`, `kbp`, `kcg`, `kge`, `knc`, `koi`, `krc`, `ksh`, `ku`, `kus`, `kv`, `kw`, `lad`, `lbe`, `lez`, `lfn`, `lij`, `lld`, `lmo`, `loz`, `ltg`, `lub`, `lzh`, `mag`, `map-bms`, `mdf`, `mg`, `mhr`, `mi`, `mni`, `mnw`, `mos`, `mrj`, `myv`, `mzn`, `nah`, `nan`, `nds`, `nds-nl`, `new`, `nia`, `nov`, `nqo`, `nrm`, `nso`, `nup`, `olo`, `or`, `pag`, `pam`, `pap`, `pcd`, `pcm`, `pdc`, `pfl`, `pi`, `pnb`, `pnt`, `ppl`, `pwn`, `rif`, `rki`, `rmy`, `roa-tara`, `rsk`, `rue`, `rup`, `rw`, `sah`, `sat`, `scn`, `sg`, `sgs`, `shi`, `shn`, `skr`, `sm`, `smn`, `sn`, `srn`, `ss`, `stq`, `su`, `syl`, `szl`, `szy`, `tay`, `tdd`, `tet`, `tig`, `tly`, `to`, `tpi`, `trv`, `tum`, `tw`, `ty`, `tyv`, `udm`, `vec`, `vep`, `vls`, `vro`, `wuu`, `xal`, `xmf`, `yue`, `zea`, `zgh`, `zh` |
 | [Official Lojban Dictionary](https://www.lojban.org) | `jbo` |
 | [Klingon Dictionary](http://klingonska.org/dict/dict.zdb) | `tlh` |
@@ -314,6 +316,40 @@ python3 scripts/import_leipzig_ngrams.py --lang fa --script generic \
 The memory counter packs a trigram into one 64-bit number, so it uses only the
 2,097,151 commonest words of a longer list (Hungarian, Finnish, Arabic and
 Turkish have more). The words it leaves out are each seen about once.
+
+### eBible and Glot500 Word Lists
+
+22 lists come from the redistributable Bible translations of the
+[eBible corpus](https://github.com/BibleNLP/ebible) and from
+[Glot500](https://huggingface.co/datasets/cis-lmu/Glot500), merged into one
+count by [`scripts/import_corpus_words.py`](../scripts/import_corpus_words.py).
+They cover keyboard languages no other source here has: four spoken Arabics
+(Mesopotamian, Gulf, South and North Levantine), Gheg Albanian, Mapudungun,
+Bemba, Kamba, Q'eqchi', Khakas, Umbundu, two Nahuatls, Jingpho, and a few
+languages of Papua New Guinea, Benin, Senegal, Panama and Canada. Karakalpak
+gets a Latin list beside its Cyrillic one, and Uzbek a Cyrillic one beside its
+Latin one. Only words in the text's main script are kept, and a list under
+1,000 words is not written. Glot500 shards were read only up to their first
+60 MB.
+
+Three candidates were built and thrown away after a look at their top words:
+Glot500's Hausa in Arabic script is Classical Arabic, its Latin Sanskrit is
+English web text, and its Cyrillic Turkmen is Russian download-page spam.
+
+### Transliterated Word Lists
+
+Five lists are another list carried into the language's other script by
+[`scripts/transliterate_wordlist.py`](../scripts/transliterate_wordlist.py),
+counts and all: Serbian in Latin (`sr_latn`, Gaj's alphabet), Bosnian in
+Cyrillic (`bs_cyrl`), Kazakh in the 2021 Latin alphabet (`kk_latn`),
+Belarusian in classical Łacinka (`be_latn`), and Standard Moroccan Tamazight
+in IRCAM Latin (`zgh_latn`). A word with a letter the scheme has no mapping for
+(a Russian word in the Belarusian list, say) is dropped.
+
+```sh
+python3 scripts/transliterate_wordlist.py sr bs kk be zgh
+python3 scripts/import_corpus_words.py --folder kjh --glot500 kjh_Cyrl.arrow --script-name CYRILLIC
+```
 
 ### Tatoeba Word Lists
 
@@ -596,6 +632,7 @@ Each dictionary retains the license of its original source.
 | `*_bigrams`, `*_trigrams` built from the Leipzig Corpora Collection | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 | `*_bigrams`, `*_trigrams` built or improved from Tatoeba | [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/) / CC0 ([Tatoeba](https://tatoeba.org/)) |
 | Word lists counted from Tatoeba (see [Tatoeba Word Lists](#tatoeba-word-lists)) | [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/) ([Tatoeba](https://tatoeba.org/)) |
+| Word lists counted from eBible and Glot500 (see [eBible and Glot500 Word Lists](#ebible-and-glot500-word-lists)) | Word counts only. Each eBible translation keeps its own licence (see the corpus's `metadata/translations.csv`); Glot500 is a collection of openly licensed sources (see its dataset card) |
 | `ur` | [MIT](https://github.com/urduhack/urdu-words/blob/master/LICENSE) |
 | `bs` | Counts: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Spelling forms: [LGPL-3.0](https://github.com/ebukva/bs_BA/blob/master/license.txt), ebukva/bs_BA |
 | `si` | [MIT](https://github.com/kasunw22/sinhala-para-dict/blob/main/LICENSE) |
