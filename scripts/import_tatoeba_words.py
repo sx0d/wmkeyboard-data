@@ -17,8 +17,8 @@ Latin and Cyrillic) gives one list per script.
 Words are NFKC+NFC normalised and lower-cased, like the generic n-gram
 importer. A word is a run of letters and combining marks; an apostrophe
 (' U+2019 U+02BC) inside a word is kept, hyphens and everything else split.
-Arabic-script lists drop the short-vowel marks and tatweel, which a keyboard
-user rarely types.
+Arabic- and Hebrew-script lists drop the vowel points (and Arabic's tatweel),
+which a keyboard user rarely types.
 
 Attribution: Tatoeba sentences are licensed CC BY 2.0 FR (https://tatoeba.org).
 
@@ -45,16 +45,22 @@ APOSTROPHES = str.maketrans({"\u2019": "'", "\u02bc": "'"})
 # macron below (U+0331) of their breathy vowels.
 LATIN_LOOKALIKES = str.maketrans({"\u03b5": "\u025b", "\u03b3": "\u0263", "\u0332": "\u0331", "\u0320": "\u0331"})
 ARABIC_MARKS = frozenset(chr(c) for c in list(range(0x064B, 0x0653)) + [0x0670, 0x0640])
+# Niqqud and cantillation: Tatoeba's Biblical Hebrew is fully pointed, a keyboard user types it bare.
+HEBREW_MARKS = frozenset(chr(c) for c in list(range(0x0591, 0x05BE)) + [0x05BF, 0x05C1, 0x05C2, 0x05C4, 0x05C5, 0x05C7])
 MAX_LEN = 32
 
 
 def script_of(ch: str) -> str | None:
-    """The script of a letter, coarsely: only the three Tatoeba mixes here."""
+    """The script of a letter, coarsely: only the scripts these lists are built in."""
     o = ord(ch)
     if 0x0600 <= o <= 0x06FF or 0x0750 <= o <= 0x077F or 0xFB50 <= o <= 0xFDFF or 0xFE70 <= o <= 0xFEFF:
         return "arabic"
     if 0x0400 <= o <= 0x052F:
         return "cyrillic"
+    if 0x0370 <= o <= 0x03FF or 0x1F00 <= o <= 0x1FFF:
+        return "greek"
+    if 0x0590 <= o <= 0x05FF or 0xFB1D <= o <= 0xFB4F:
+        return "hebrew"
     if o <= 0x02AF or 0x1E00 <= o <= 0x1EFF or 0x2C60 <= o <= 0x2C7F or 0xA720 <= o <= 0xA7FF:
         return "latin"
     return None
@@ -74,7 +80,7 @@ def tokens(text: str, strip_arabic_marks: bool, latin: bool):
     word = []
     for ch in text + " ":
         cat = unicodedata.category(ch)
-        if strip_arabic_marks and ch in ARABIC_MARKS:
+        if strip_arabic_marks and (ch in ARABIC_MARKS or ch in HEBREW_MARKS):
             continue
         if cat[0] == "L" or (cat[0] == "M" and word) or (ch == "'" and word):
             word.append(ch)
@@ -90,7 +96,7 @@ def main() -> int:
     parser.add_argument("--sentences", required=True, help="<iso3>_sentences.tsv[.bz2]")
     parser.add_argument("--folder", required=True, help="folder under data/")
     parser.add_argument("--stem", help="output file stem (default <folder>_full)")
-    parser.add_argument("--script", required=True, choices=("latin", "arabic", "cyrillic"))
+    parser.add_argument("--script", required=True, choices=("latin", "arabic", "cyrillic", "greek", "hebrew"))
     parser.add_argument("--min-count", type=int, default=1)
     args = parser.parse_args()
 
@@ -106,7 +112,7 @@ def main() -> int:
                 skipped += 1
                 continue
             used += 1
-            for token in tokens(parts[2], args.script == "arabic", args.script == "latin"):
+            for token in tokens(parts[2], args.script in ("arabic", "hebrew"), args.script == "latin"):
                 if all(script_of(c) in (args.script, None) for c in token if c.isalpha()):
                     counts[token] += 1
 

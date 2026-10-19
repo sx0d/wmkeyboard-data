@@ -66,7 +66,8 @@ This repository redistributes and packages data from the following open-source p
 | [kasunw22/sinhala-para-dict](https://github.com/kasunw22/sinhala-para-dict) | `si` |
 | [vigneshwaran-chandrasekaran/tamil-language-words-list](https://github.com/vigneshwaran-chandrasekaran/tamil-language-words-list) | `ta` |
 | [tahmid02016/bangla-wordlist](https://github.com/tahmid02016/bangla-wordlist) | `bn` |
-| [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/de) | `aa`, `af`, `ak`, `am`, `an`, `as`, `az`, `ba`, `be`, `bm`, `bo`, `br`, `ce`, `co`, `cv`, `cy`, `div`, `ee`, `eo`, `eu`, `ff`, `fo`, `fy`, `gl`, `gn`, `gu`, `gv`, `ha`, `hi`, `ht`, `hy`, `ia`, `ie`, `ig`, `ina`, `io`, `jv`, `ka`, `kg`, `ki`, `kk`, `kl`, `km`, `kn`, `koi`, `kok`, `ky`, `lg`, `li`, `ln`, `lo`, `lv`, `mn`, `mr`, `ms`, `mt`, `my`, `myv`, `nd`, `ne`, `nn`, `nr`, `nv`, `ny`, `oc`, `om`, `os`, `pa`, `ps`, `qu`, `rm`, `rn`, `sco`, `se`, `sh`, `sna`, `so`, `ssw`, `st`, `sun`, `sw`, `te`, `tg`, `ti`, `tk`, `tl`, `tn`, `ts`, `tt`, `ug`, `uz`, `ve`, `vi`, `vo`, `wa`, `wo`, `xh`, `yi`, `yo`, `za`, `zu` |
+| [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/de) | `aa`, `af`, `ak`, `am`, `an`, `as`, `az`, `ba`, `be`, `bm`, `bo`, `br`, `ce`, `co`, `cv`, `cy`, `div`, `ee`, `eo`, `eu`, `ff`, `fo`, `fy`, `gl`, `gn`, `gu`, `gv`, `ha`, `hi`, `ht`, `hy`, `ia`, `ie`, `ig`, `ina`, `io`, `jv`, `ka`, `kg`, `ki`, `kk`, `kl`, `km`, `kn`, `koi`, `kok`, `ky`, `lg`, `li`, `ln`, `lo`, `lv`, `mn`, `mr`, `ms`, `mt`, `my`, `myv`, `nd`, `ne`, `nn`, `nr`, `nv`, `ny`, `oc`, `om`, `os`, `pa`, `ps`, `qu`, `rm`, `sco`, `se`, `sh`, `sna`, `so`, `ssw`, `st`, `sun`, `sw`, `te`, `tg`, `ti`, `tk`, `tl`, `tn`, `ts`, `tt`, `ug`, `uz`, `ve`, `vi`, `vo`, `wa`, `wo`, `xh`, `yi`, `yo`, `za`, `zu` |
+| [Tatoeba sentence corpus](https://tatoeba.org/), counted by [`scripts/import_tatoeba_words.py`](../scripts/import_tatoeba_words.py) | `arq`, `ber`, `bzt`, `ckt`, `dar`, `enm`, `fkv`, `gcf`, `gos`, `grc`, `hbo`, `hoc` (`hoc_latn`), `hrx`, `isv` (`isv_latn`), `kha`, `kzj`, `mus`, `nnb`, `nus`, `orv`, `ota` (`ota_full` and `ota_latn`), `pau`, `prg`, `rif`, `rn`, `rom`, `sdh`, `swc`, `swg`, `thv`, `ttq` |
 | [Wikimedia data dumps](https://dumps.wikimedia.org/) | `ab`, `ace`, `ady`, `alt`, `ami`, `ang`, `ann`, `anp`, `arc`, `arz`, `atj`, `av`, `avk`, `awa`, `ay`, `azb`, `bar`, `bbc`, `bdr`, `be-tarask`, `bew`, `bh`, `bi`, `bik`, `bjn`, `blk`, `bol`, `bpy`, `btm`, `bxr`, `cbk`, `cbk-zam`, `cdo`, `ch`, `chr`, `chy`, `cr`, `crh`, `csb`, `cu`, `dag`, `dga`, `din`, `diq`, `dsb`, `dtp`, `dty`, `dv`, `dz`, `eml`, `ext`, `fat`, `fj`, `fon`, `frp`, `frr`, `fur`, `gag`, `gan`, `gcr`, `gd`, `glk`, `gom`, `gor`, `got`, `gpe`, `guc`, `gur`, `guw`, `hak`, `haw`, `hif`, `hsb`, `hyw`, `iba`, `igl`, `ik`, `inh`, `isv`, `iu`, `jam`, `kaa`, `kai`, `kaj`, `kbd`, `kbp`, `kcg`, `kge`, `knc`, `koi`, `krc`, `ksh`, `ku`, `kus`, `kv`, `kw`, `lad`, `lbe`, `lez`, `lfn`, `lij`, `lld`, `lmo`, `loz`, `ltg`, `lub`, `lzh`, `mag`, `map-bms`, `mdf`, `mg`, `mhr`, `mi`, `mni`, `mnw`, `mos`, `mrj`, `myv`, `mzn`, `nah`, `nan`, `nds`, `nds-nl`, `new`, `nia`, `nov`, `nqo`, `nrm`, `nso`, `nup`, `olo`, `or`, `pag`, `pam`, `pap`, `pcd`, `pcm`, `pdc`, `pfl`, `pi`, `pnb`, `pnt`, `ppl`, `pwn`, `rif`, `rki`, `rmy`, `roa-tara`, `rsk`, `rue`, `rup`, `rw`, `sah`, `sat`, `scn`, `sg`, `sgs`, `shi`, `shn`, `skr`, `sm`, `smn`, `sn`, `srn`, `ss`, `stq`, `su`, `syl`, `szl`, `szy`, `tay`, `tdd`, `tet`, `tig`, `tly`, `to`, `tpi`, `trv`, `tum`, `tw`, `ty`, `tyv`, `udm`, `vec`, `vep`, `vls`, `vro`, `wuu`, `xal`, `xmf`, `yue`, `zea`, `zgh`, `zh` |
 | [Official Lojban Dictionary](https://www.lojban.org) | `jbo` |
 | [Klingon Dictionary](http://klingonska.org/dict/dict.zdb) | `tlh` |
@@ -314,9 +315,35 @@ The memory counter packs a trigram into one 64-bit number, so it uses only the
 2,097,151 commonest words of a longer list (Hungarian, Finnish, Arabic and
 Turkish have more). The words it leaves out are each seen about once.
 
+### Tatoeba Word Lists
+
+31 languages that no larger corpus covers have word lists counted from the
+[Tatoeba sentence corpus](https://tatoeba.org/) ([CC BY 2.0
+FR](https://creativecommons.org/licenses/by/2.0/fr/)) by
+[`scripts/import_tatoeba_words.py`](../scripts/import_tatoeba_words.py). Only
+languages whose sentences give at least 1,000 distinct words are built, from
+Tamazight's 81,160 (Tatoeba's `ber`, nearly 700,000 sentences) down to Romani's
+1,029; the many languages Tatoeba holds a few dozen sentences for are left out.
+
+Each list counts only the sentences written in its own script. Ottoman Turkish
+has two, `ota_full` for the Arabic-script sentences and `ota_latn` for the
+transliterated ones; Interslavic's list is `isv_latn` (Tatoeba's Cyrillic
+Interslavic is too small) and Ho's is `hoc_latn` (its Warang Citi sentences are
+left for a future list). Words are NFKC+NFC normalised and lower-cased; Greek
+epsilon and gamma written for `ɛ` and `ɣ` are folded into the Latin letters, as
+are Nuer's stray line-below marks into U+0331, and Arabic- and Hebrew-script
+lists drop the vowel points. Kirundi's `rn_full` was replaced by its Tatoeba
+list: the old one was an unsorted list with a count of 5 on every word.
+
+```sh
+curl -LO https://downloads.tatoeba.org/exports/per_language/swc/swc_sentences.tsv.bz2
+python3 scripts/import_tatoeba_words.py --sentences swc_sentences.tsv.bz2 --folder swc --script latin
+python3 scripts/import_tatoeba_words.py --sentences ota_sentences.tsv.bz2 --folder ota --stem ota_latn --script latin
+```
+
 ### Tatoeba Sentence Corpus Word Pairs
 
-For 166 additional languages — including constructed languages (Esperanto, Toki
+For 186 additional languages — including constructed languages (Esperanto, Toki
 Pona, Klingon, Lojban, Ido, Interlingua, Interlingue, Lingua Franca Nova, Volapük,
 Novial, Kotava, Quenya), classical languages (Latin, Gothic, Old English, Sanskrit),
 AOSP keyboard languages (Lithuanian, Latvian, Slovenian, Basque, Galician, etc.),
@@ -341,6 +368,7 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Language | Code | Tatoeba Code | Bigrams | Trigrams |
 |---|---|---|---:|---:|
 | Esperanto | `eo` | `epo` | 150,000 | 75,000 |
+| Tamazight (Latin) | `ber` | `ber` | 150,000 | 75,000 |
 | Lithuanian | `lt` | `lit` | 67,725 | 44,525 |
 | Kabyle | `kab` | `kab` | 66,130 | 68,844 |
 | Filipino | `fil` | `tgl` | 45,846 | 56,424 |
@@ -349,6 +377,7 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Tatar | `tt` | `tat` | 25,853 | 10,257 |
 | Latin | `la` | `lat` | 23,317 | 9,145 |
 | Eastern Armenian | `hy` | `hye` | 19,691 | 12,421 |
+| Congo Swahili | `swc` | `swc` | 17,503 | 6,289 |
 | Hausa | `ha` | `hau` | 17,142 | 9,745 |
 | Lingua Franca Nova | `lfn` | `lfn` | 16,828 | 15,364 |
 | Tigre | `tig` | `tig` | 14,255 | 5,448 |
@@ -363,6 +392,7 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Standard Moroccan Tamazight | `zgh` | `zgh` | 7,530 | 3,829 |
 | Klingon | `tlh` | `tlh` | 7,271 | 2,257 |
 | Low Saxon (Netherlands) | `nds_nl` | `nds` | 7,091 | 4,804 |
+| Gronings | `gos` | `gos` | 6,663 | 2,719 |
 | Norwegian Nynorsk | `nn` | `nno` | 6,557 | 4,176 |
 | Ido | `io` | `ido` | 6,322 | 3,512 |
 | Belarusian (Taraškievica) | `be_x_old` | `bel` | 6,205 | 1,980 |
@@ -373,14 +403,19 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Interlingue | `ie` | `ile` | 4,824 | 3,594 |
 | Northern Kurdish (Kurmancî) | `ku` | `kmr` | 4,562 | 2,017 |
 | Breton | `br` | `bre` | 4,201 | 2,949 |
+| Coastal Kadazan | `kzj` | `kzj` | 3,986 | 1,773 |
+| Nande | `nnb` | `nnb` | 3,073 | 337 |
 | Santali | `sat` | `sat` | 2,920 | 1,474 |
 | Uyghur | `ug` | `uig` | 2,892 | 809 |
 | Afrikaans | `af` | `afr` | 2,840 | 1,569 |
+| Old Prussian | `prg` | `prg` | 2,451 | 835 |
 | Basque | `eu` | `eus` | 2,448 | 823 |
 | Estonian | `et` | `est` | 2,205 | 882 |
 | Turkmen | `tk` | `tuk` | 2,126 | 674 |
 | North Frisian | `frr` | `frr` | 1,858 | 671 |
+| Tarifit | `rif` | `rif` | 1,844 | 716 |
 | Georgian | `ka` | `kat` | 1,817 | 425 |
+| Khasi | `kha` | `kha` | 1,734 | 1,311 |
 | Central Kanuri | `knc` | `knc` | 1,712 | 185 |
 | Irish | `ga` | `gle` | 1,686 | 916 |
 | Chavacano | `cbk` | `cbk` | 1,671 | 1,057 |
@@ -388,22 +423,34 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Cornish | `kw` | `cor` | 1,542 | 1,151 |
 | Slovenian | `sl` | `slv` | 1,532 | 489 |
 | Albanian | `sq` | `sqi` | 1,526 | 614 |
+| Nuer | `nus` | `nus` | 1,358 | 517 |
+| Hunsrik | `hrx` | `hrx` | 1,303 | 611 |
 | Ilocano | `ilo` | `ilo` | 1,275 | 537 |
+| Kirundi | `rn` | `run` | 1,259 | 352 |
 | Meadow Mari | `mhr` | `mhr` | 1,216 | 186 |
 | Mongolian | `mn` | `mon` | 1,192 | 332 |
+| Swabian | `swg` | `swg` | 1,143 | 300 |
 | Udmurt | `udm` | `udm` | 1,092 | 223 |
-| Kirundi | `rn` | `run` | 1,048 | 289 |
 | Kotava | `avk` | `avk` | 1,037 | 262 |
 | Ossetian | `os` | `oss` | 1,002 | 89 |
 | Welsh | `cy` | `cym` | 994 | 501 |
+| Guadeloupean Creole | `gcf` | `gcf` | 938 | 639 |
 | Volapük | `vo` | `vol` | 855 | 225 |
 | Ligurian | `lij` | `lij` | 846 | 327 |
 | Cebuano | `ceb` | `ceb` | 839 | 275 |
 | Scottish Gaelic | `gd` | `gla` | 794 | 471 |
 | Tigrinya | `ti` | `tir` | 779 | 83 |
 | Ladino | `lad` | `lad` | 721 | 320 |
+| Ottoman Turkish (Latin) | `ota_latn` | `ota` | 716 | 97 |
+| Ancient Greek | `grc` | `grc` | 698 | 246 |
+| Ho (Latin) | `hoc_latn` | `hoc` | 673 | 211 |
 | Guarani | `gn` | `grn` | 670 | 151 |
+| Brithenig | `bzt` | `bzt` | 666 | 355 |
+| Middle English | `enm` | `enm` | 654 | 379 |
+| Palauan | `pau` | `pau` | 622 | 423 |
+| Romani | `rom` | `rom` | 572 | 419 |
 | Bosnian | `bs` | `bos` | 569 | 155 |
+| Interslavic (Latin) | `isv_latn` | `isv` | 502 | 202 |
 | Luxembourgish | `lb` | `ltz` | 501 | 264 |
 | Avar | `av` | `ava` | 497 | 106 |
 | Piedmontese | `pms` | `pms` | 470 | 211 |
@@ -537,6 +584,7 @@ Each dictionary retains the license of its original source.
 | Most frequency lists | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
 | `*_bigrams`, `*_trigrams` built from the Leipzig Corpora Collection | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 | `*_bigrams`, `*_trigrams` built or improved from Tatoeba | [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/) / CC0 ([Tatoeba](https://tatoeba.org/)) |
+| Word lists counted from Tatoeba (see [Tatoeba Word Lists](#tatoeba-word-lists)) | [CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/) ([Tatoeba](https://tatoeba.org/)) |
 | `ur` | [MIT](https://github.com/urduhack/urdu-words/blob/master/LICENSE) |
 | `bs` | Counts: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Spelling forms: [LGPL-3.0](https://github.com/ebukva/bs_BA/blob/master/license.txt), ebukva/bs_BA |
 | `si` | [MIT](https://github.com/kasunw22/sinhala-para-dict/blob/main/LICENSE) |
@@ -545,7 +593,7 @@ Each dictionary retains the license of its original source.
 | `tok` | [CC0 1.0 Universal](https://github.com/lipu-linku/sona) / [lipu Linku](https://linku.la) |
 | `bho`, `brx`, `doi`, `ks`, `mai`, `raj` | [MIT](https://github.com/motaitalic/devanagari-documentation/blob/main/LICENSE) |
 | `ab`, `ace`, `ady`, `alt`, `ami`, `ang`, `ann`, `anp`, `arc`, `arz`, `atj`, `av`, `avk`, `awa`, `ay`, `azb`, `bar`, `bbc`, `bdr`, `be-tarask`, `bew`, `bh`, `bi`, `bik`, `bjn`, `blk`, `bol`, `bpy`, `btm`, `bxr`, `cbk`, `cbk-zam`, `cdo`, `ch`, `chr`, `chy`, `cr`, `crh`, `csb`, `cu`, `dag`, `dga`, `din`, `diq`, `dsb`, `dtp`, `dty`, `dv`, `dz`, `eml`, `ext`, `fat`, `fj`, `fon`, `frp`, `frr`, `fur`, `gag`, `gan`, `gcr`, `gd`, `glk`, `gom`, `gor`, `got`, `gpe`, `guc`, `gur`, `guw`, `hak`, `haw`, `hif`, `hsb`, `hyw`, `iba`, `igl`, `ik`, `inh`, `isv`, `iu`, `jam`, `kaa`, `kai`, `kaj`, `kbd`, `kbp`, `kcg`, `kge`, `knc`, `koi`, `krc`, `ksh`, `ku`, `kus`, `kv`, `kw`, `lad`, `lbe`, `lez`, `lfn`, `lij`, `lld`, `lmo`, `loz`, `ltg`, `lub`, `lzh`, `mag`, `map-bms`, `mdf`, `mg`, `mhr`, `mi`, `mni`, `mnw`, `mos`, `mrj`, `myv`, `mzn`, `nah`, `nan`, `nds`, `nds-nl`, `new`, `nia`, `nov`, `nqo`, `nrm`, `nso`, `nup`, `olo`, `or`, `pag`, `pam`, `pap`, `pcd`, `pcm`, `pdc`, `pfl`, `pi`, `pnb`, `pnt`, `ppl`, `pwn`, `rif`, `rki`, `rmy`, `roa-tara`, `rsk`, `rue`, `rup`, `rw`, `sah`, `sat`, `scn`, `sg`, `sgs`, `shi`, `shn`, `skr`, `sm`, `smn`, `sn`, `srn`, `ss`, `stq`, `su`, `syl`, `szl`, `szy`, `tay`, `tdd`, `tet`, `tig`, `tly`, `to`, `tpi`, `trv`, `tum`, `tw`, `ty`, `tyv`, `udm`, `vec`, `vep`, `vls`, `vro`, `wuu`, `xal`, `xmf`, `yue`, `zea`, `zgh`, `zh` | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (Wikimedia Data Dumps) |
-| `aa`, `af`, `ak`, `am`, `an`, `as`, `az`, `ba`, `be`, `bm`, `bo`, `br`, `ce`, `co`, `cv`, `cy`, `div`, `ee`, `eo`, `eu`, `ff`, `fo`, `fy`, `gl`, `gn`, `gu`, `gv`, `ha`, `hi`, `ht`, `hy`, `ia`, `ie`, `ig`, `ina`, `io`, `jv`, `ka`, `kg`, `ki`, `kk`, `kl`, `km`, `kn`, `koi`, `kok`, `ky`, `lg`, `li`, `ln`, `lo`, `lv`, `mn`, `mr`, `ms`, `mt`, `my`, `myv`, `nd`, `ne`, `nn`, `nr`, `nv`, `ny`, `oc`, `om`, `os`, `pa`, `ps`, `qu`, `rm`, `rn`, `sco`, `se`, `sh`, `sna`, `so`, `ssw`, `st`, `sun`, `sw`, `te`, `tg`, `ti`, `tk`, `tl`, `tn`, `ts`, `tt`, `ug`, `uz`, `ve`, `vi`, `vo`, `wa`, `wo`, `xh`, `yi`, `yo`, `za`, `zu` | [CC BY-SA 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| `aa`, `af`, `ak`, `am`, `an`, `as`, `az`, `ba`, `be`, `bm`, `bo`, `br`, `ce`, `co`, `cv`, `cy`, `div`, `ee`, `eo`, `eu`, `ff`, `fo`, `fy`, `gl`, `gn`, `gu`, `gv`, `ha`, `hi`, `ht`, `hy`, `ia`, `ie`, `ig`, `ina`, `io`, `jv`, `ka`, `kg`, `ki`, `kk`, `kl`, `km`, `kn`, `koi`, `kok`, `ky`, `lg`, `li`, `ln`, `lo`, `lv`, `mn`, `mr`, `ms`, `mt`, `my`, `myv`, `nd`, `ne`, `nn`, `nr`, `nv`, `ny`, `oc`, `om`, `os`, `pa`, `ps`, `qu`, `rm`, `sco`, `se`, `sh`, `sna`, `so`, `ssw`, `st`, `sun`, `sw`, `te`, `tg`, `ti`, `tk`, `tl`, `tn`, `ts`, `tt`, `ug`, `uz`, `ve`, `vi`, `vo`, `wa`, `wo`, `xh`, `yi`, `yo`, `za`, `zu` | [CC BY-SA 4.0](https://creativecommons.org/licenses/by/4.0/) |
 | `ta` | [MIT](https://github.com/vigneshwaran-chandrasekaran/tamil-language-words-list/blob/master/LICENSE) |
 | `bgn` | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) / [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
 | `blo` | [Unicode License Agreement](https://www.unicode.org/license.txt) / [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) |
