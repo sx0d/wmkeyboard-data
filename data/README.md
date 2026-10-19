@@ -343,7 +343,7 @@ python3 scripts/import_tatoeba_words.py --sentences ota_sentences.tsv.bz2 --fold
 
 ### Tatoeba Sentence Corpus Word Pairs
 
-For 186 additional languages — including constructed languages (Esperanto, Toki
+For 197 additional languages — including constructed languages (Esperanto, Toki
 Pona, Klingon, Lojban, Ido, Interlingua, Interlingue, Lingua Franca Nova, Volapük,
 Novial, Kotava, Quenya), classical languages (Latin, Gothic, Old English, Sanskrit),
 AOSP keyboard languages (Lithuanian, Latvian, Slovenian, Basque, Galician, etc.),
@@ -453,25 +453,32 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Interslavic (Latin) | `isv_latn` | `isv` | 502 | 202 |
 | Luxembourgish | `lb` | `ltz` | 501 | 264 |
 | Avar | `av` | `ava` | 497 | 106 |
+| Algerian Arabic | `arq` | `arq` | 483 | 119 |
 | Piedmontese | `pms` | `pms` | 470 | 211 |
 | Maori | `mi` | `mri` | 435 | 263 |
 | Kapampangan | `pam` | `pam` | 428 | 160 |
 | Lower Sorbian | `dsb` | `dsb` | 421 | 129 |
 | Upper Sorbian | `hsb` | `hsb` | 392 | 95 |
+| Dargwa | `dar` | `dar` | 387 | 95 |
 | Novial | `nov` | `nov` | 374 | 141 |
 | Waray | `war` | `war` | 370 | 112 |
 | Chuvash | `cv` | `chv` | 368 | 73 |
 | Egyptian Arabic | `arz` | `arz` | 360 | 91 |
+| Old East Slavic | `orv` | `orv` | 349 | 79 |
 | Javanese | `jv` | `jav` | 332 | 91 |
+| Tamajaq (Latin) | `ttq` | `ttq` | 293 | 110 |
 | Asturian | `ast` | `ast` | 289 | 70 |
 | Sundanese | `su` | `sun` | 273 | 56 |
 | Frisian | `fy` | `fry` | 258 | 69 |
 | Old English | `ang` | `ang` | 253 | 79 |
 | Picard | `pcd` | `pcd` | 248 | 75 |
+| Ottoman Turkish | `ota` | `ota` | 213 | 44 |
 | Sundanese | `sun` | `sun` | 210 | 38 |
 | Silesian | `szl` | `szl` | 199 | 48 |
 | Kashubian | `csb` | `csb` | 197 | 60 |
+| Southern Kurdish | `sdh` | `sdh` | 180 | 18 |
 | Venetian | `vec` | `vec` | 178 | 88 |
+| Chukchi | `ckt` | `ckt` | 173 | 28 |
 | Rohingya | `rhg` | `rhg` | 160 | 7 |
 | Faroese | `fo` | `fao` | 154 | 35 |
 | Sranan Tongo | `srn` | `srn` | 153 | 40 |
@@ -483,9 +490,11 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Crimean Tatar | `crh` | `crh` | 118 | 29 |
 | Veps | `vep` | `vep` | 118 | 27 |
 | Maltese | `mt` | `mlt` | 114 | 23 |
+| Tamahaq (Latin) | `thv` | `thv` | 112 | 17 |
 | Gothic | `got` | `got` | 102 | 45 |
 | Bavarian | `bar` | `bar` | 101 | 29 |
 | Kalmyk | `xal` | `xal` | 101 | 6 |
+| Kven | `fkv` | `fkv` | 99 | 21 |
 | Awadhi | `awa` | `awa` | 88 | 48 |
 | Latgalian | `ltg` | `ltg` | 83 | 9 |
 | Hawaiian | `haw` | `haw` | 80 | 49 |
@@ -493,6 +502,7 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Wayuu | `guc` | `guc` | 74 | 4 |
 | Yakut | `sah` | `sah` | 73 | 8 |
 | Bashkir | `ba` | `bak` | 67 | 20 |
+| Muscogee | `mus` | `mus` | 65 | 12 |
 | Tok Pisin | `tpi` | `tpi` | 64 | 39 |
 | Luganda | `lg` | `lug` | 62 | 7 |
 | Mirandese | `mwl` | `mwl` | 60 | 17 |
@@ -523,6 +533,7 @@ blending Tatoeba conversational sentences (weighted ×3) into their corpus lists
 | Tuvinian | `tyv` | `tyv` | 22 | 10 |
 | Extremaduran | `ext` | `ext` | 21 | 7 |
 | Pennsylvania German | `pdc` | `pdc` | 21 | 9 |
+| Biblical Hebrew | `hbo` | `hbo` | 19 | 5 |
 | Bhojpuri | `bho` | `bho` | 18 | 5 |
 | Tumbuka | `tum` | `tum` | 18 | 3 |
 | Xhosa | `xh` | `xho` | 16 | 1 |
