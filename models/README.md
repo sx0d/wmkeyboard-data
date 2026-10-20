@@ -103,3 +103,44 @@ list siblings, rules) on held-out words, with the model's readings joined
 after the committed one: Bengali top-4 52% → 80% on chat spellings the map
 does not list, Hindi 88% → 93%; on the Aksharantar test words Bengali 30% →
 80%, Hindi 55% → 84%.
+
+## Sticker generator: SDXS-512-DreamShaper and the picture filter
+
+The keyboard's **Create stickers**: type a prompt, the phone draws the sticker.
+These files are assets of the [`models` release](https://github.com/wasi-master/wmkeyboard-data/releases/tag/models),
+named `<sha256>-<name>`. `scripts/build_sticker_models.sh` builds them (it runs
+WM Keyboard's `tools/imagegen/convert_sd.py`), and `scripts/upload_embedding_models.sh <dir> sdxs-ds-`
+and `... nsfw-` upload them. MNN writes a random model id into each file, so a
+rebuild has different bytes and needs new pins in the app; the pins below are
+the published files'.
+
+| | |
+|---|---|
+| Model | SDXS-512-DreamShaper (Song, Sun, Yin, *SDXS: Real-Time One-Step Latent Diffusion Models with Image Conditions*, 2024): a one-step distillation of DreamShaper 8, with TAESD as its decoder |
+| Source | `IDKiro/sdxs-512-dreamshaper` at `76f720262bb051da75666b22c902a78c8e16c763` |
+| Change | Exported to ONNX and converted to MNN with float16 weights (run in float32). No transformer fusion: it moves the UNet's noise prediction enough that a one-step model draws another picture. Checked against diffusers on the same noise: PSNR 30.9 dB at 512 × 512 |
+| License | [CreativeML Open RAIL++-M](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/blob/main/LICENSE.md) (the model's use restrictions apply to anyone who runs it); TAESD MIT |
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `sdxs-ds-wmimage.json` | 489 | `6cc049f94e0b8c5f04c009df049dbdb8a017e43af6541621abe01e3835c056a0` | How to drive it: one step at t = 999, no guidance, 384 or 512 |
+| `sdxs-ds-merges.txt` | 524,619 | `9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a` | CLIP's BPE merges; the app builds the 49,408-entry vocabulary from them |
+| `sdxs-ds-text_encoder.mnn` | 246,550,752 | `2c317b828bfe12f22b3a8dc51190b2e0a172ce1bcc412297399654543b3e5acb` | CLIP ViT-L/14 text encoder: `ids` [1, 77] int32 → `h` [1, 77, 768] |
+| `sdxs-ds-unet.mnn` | 632,280,940 | `ebf37f1404d4114b07939863f222f191b6ff75ba5c6e042c5c3c9e7e21c25d3e` | The one-step UNet: `x` [1, 4, H/8, W/8], `t` [1], `e` [1, 77, 768] → `y` |
+| `sdxs-ds-vae_decoder.mnn` | 2,465,260 | `06bb91f53739c42062559c726912d54aefde3ce14bf9fdfe6b901d37e11ed6a2` | TAESD's decoder: `z` latent → `img` [1, 3, H, W] in 0..1 |
+
+The picture filter every generated sticker passes through:
+
+| | |
+|---|---|
+| Model | NSFW image detection (Falconsai), a ViT-Base/16 at 224 × 224 |
+| Source | `Falconsai/nsfw_image_detection` at `96cb0d0342c7afb80cab76ecc58b265fa44da256` |
+| Change | Softmax appended, exported to ONNX, converted to MNN with 8-bit weights; probabilities match the original to four decimals on the test pictures |
+| License | Apache-2.0 |
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `nsfw-vit-falconsai.mnn` | 87,454,824 | `be15cad824b0161ee2f91074a4cabfaea42e034ba761b0ee50b093736e721a70` | `image` [1, 3, 224, 224] (RGB / 255, then (v − 0.5) / 0.5) → `probs` [1, 2]: normal, nsfw |
+
+The NPU model (Stable Diffusion 1.5 as Qualcomm AI Hub compiled it for each
+Snapdragon) is not here: the phone fetches it from Qualcomm's own bucket.
