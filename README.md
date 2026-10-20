@@ -20,6 +20,7 @@ That lives separately.
 | [`keyman/`](keyman/) | Typing rules (`<id>/<id>.kmx.gz`) for the 812 Keyman keyboards WM Keyboard bundles that have any, read only when keyman.com can't serve them — see [`keyman/README.md`](keyman/README.md) | [Keyman](https://keyman.com/) packages, per-keyboard MIT |
 | [`fonts/`](fonts/) | Fonts the app fetches for a layout whose letters no phone font has: Klingon pIqaD — see [`fonts/README.md`](fonts/README.md) | Klingon pIqaD HaSta, SIL OFL 1.1 |
 | [`models/`](models/) | Small on-device networks the app fetches on demand, pinned by SHA-256: the sticker editor's background remover (`cutout/u2netp.tflite`, 4.6 MB) — see [`models/README.md`](models/README.md) | U²-Net (Qin et al.), Apache-2.0 |
+| [`natives/`](natives/) | Where the app's on-demand native libraries are published: assets of the `natives` release, named `<sha256>-<library>`, pinned by the app that downloads them — see [`natives/README.md`](natives/README.md) | The WM Keyboard app repository's own build |
 
 The phonetic indexes are binary tables the app memory-maps instead of folding the whole word list on the phone at every start. Each file name carries the table format and fold version it was written by; a new version is published under a new name beside the old one, which stays for the app versions that still fetch it.
 
