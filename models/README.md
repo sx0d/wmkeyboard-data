@@ -47,12 +47,13 @@ app, never replaced, a new file gets a new digest.
 | Change | Repackaged only: the LiteRT-LM bundle's external weight sections are written back into ordinary TFLite buffers, only the signatures the app runs are kept (shortest first, since the classic interpreter prepares subgraph 0 on load), and the int4 token table becomes a flat file the app reads without an interpreter. No weight is requantised; the kept signatures' outputs are bit-identical to the bundle's. |
 | License | [Apache-2.0](https://huggingface.co/google/embeddinggemma-2), © Google |
 
-Text (151,886,397 bytes in all):
+Text (154,534,514 bytes in all):
 
 | File | Bytes | SHA-256 | What it is |
 |---|---:|---|---|
 | `eg2-tokenizer.model` | 4,689,013 | `e594c8a90eb08d8bda498ff4747977dc827ae0c3c56b5c0d41a605a22d02ef03` | SentencePiece BPE model, byte fallback, 262,144 pieces (identical to `google/embeddinggemma-2`'s `tokenizer.model`) |
 | `eg2-tokens.bin` | 68,157,456 | `3bc62fc4be4c2c9bc5c9902e8b41a19e698a6b218314390fa2411f4242ae5160` | `WMTE`, int32 vocabulary, int32 width (512), float32 multiplier (√512), one float32 scale per row, then rows of signed int4 pairs, low nibble first |
+| `eg2-emoji-vectors.bin` | 2,648,117 | `63326576717ebaaa3d1e9da5ee040e90f7ea962876ebe3c0a655bcec468956d6` | the app's emoji catalogue (`catalog.tsv` at c848610e6, 1,716 emoji without their skin-tone variants) embedded by `scripts/embed_emoji_catalog.py` as stored texts, `<name>: <up to ten English keywords>`: `WMEV`, int32 version, int32 count, int32 width, length-prefixed UTF-8 emoji, then float16 unit vectors |
 | `eg2-text-encoder.tflite` | 79,039,928 | `305850a79ab1a38a8d3862f5ac7d9500a386ac969c4f9783da6d81237ead038b` | signatures `encoder_1x{128,256,512}` (the bundle's 1024, 2048 and 8192 are left out): `embeddings` `[1, n, 512]`, `input_mask` `[1, n]` → `encodings` `[1, 768]` (L2-normalise it) |
 
 Pictures (220,552,716 bytes more):
