@@ -5,8 +5,13 @@
 # a pinned file is never replaced, and a new file has a new digest.
 #
 #   scripts/upload_embedding_models.sh models/embeddings
+#   scripts/upload_embedding_models.sh models/indicxlit indicxlit-
+#
+# The second argument is the file name prefix to upload (eg2- by default):
+# export_indicxlit.py's files go up the same way.
 set -euo pipefail
-dir=${1:?usage: $0 <directory written by repack_embeddinggemma2.py>}
+dir=${1:?usage: $0 <directory written by repack_embeddinggemma2.py> [prefix]}
+prefix=${2:-eg2-}
 repo=wasi-master/wmkeyboard-data
 tag=models
 gh release view "$tag" --repo "$repo" >/dev/null 2>&1 ||
@@ -15,7 +20,7 @@ gh release view "$tag" --repo "$repo" >/dev/null 2>&1 ||
 existing=$(gh release view "$tag" --repo "$repo" --json assets --jq '.assets[].name')
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
-for file in "$dir"/eg2-*; do
+for file in "$dir"/"$prefix"*; do
   name=$(basename "$file")
   sha=$(shasum -a 256 "$file" | cut -d' ' -f1)
   asset="$sha-$name"

@@ -71,3 +71,35 @@ stored texts `title: none | text: `. Checked through LiteRT 2.3.0 on these
 exact files: English, Bengali and French texts rank as expected against each
 other, and text queries pick the matching COCO photograph (cats on a sofa,
 a skier, a bedroom, tennis, baseball, including a Bengali query).
+
+## Phonetic typing: IndicXlit
+
+The keyboard's **Neural suggestions** on the phonetic layouts for Bengali,
+Hindi, Urdu, Assamese, Marathi, Gujarati, Punjabi, Odia, Tamil, Telugu,
+Kannada and Malayalam: up to three readings of the word being typed, in the
+suggestion strip after the one the space bar commits. One model covers all
+of them, so the three files are shared.
+
+Assets of the [`models` release](https://github.com/wasi-master/wmkeyboard-data/releases/tag/models),
+named `<sha256>-<name>`. `scripts/export_indicxlit.py` builds them (the same
+bytes on every run with the versions it names) and
+`scripts/upload_embedding_models.sh models/indicxlit indicxlit-` uploads them.
+
+| | |
+|---|---|
+| Model | IndicXlit v1.0, English to Indic (AI4Bharat, Madhani et al., *Aksharantar*, 2022): fairseq transformer, 6 + 6 layers, width 256, 11.5M parameters, 21 languages |
+| Source | `indicxlit-en-indic-v1.0.zip` on the [IndicXlit v1.0 release](https://github.com/AI4Bharat/IndicXlit/releases/tag/v1.0) (`sha256 31dabc44…f169ca`), checkpoint `transformer/indicxlit.pt` (`sha256 2f03fe0d…24a09f7`) |
+| Change | Exported to ONNX without fairseq (the state dict loaded into equivalent PyTorch modules), the decoder as a single step with its own self-attention cache, weights quantised to int8 (dynamic, MatMul). On the Aksharantar test words int8 is within half a point of float32. |
+| License | [MIT](https://github.com/AI4Bharat/IndicXlit/blob/master/LICENSE), © AI4Bharat |
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `indicxlit-encoder.int8.onnx` | 6,072,771 | `c94cd7a2e048da5d6d7f3f46e00dce13a654cb4db7afdeb03d068d730da48ce8` | `src` `[1, S]` int64 (`__<lang>__`, the letters, `</s>`) → `cross_k`, `cross_v` `[6, 1, 4, S, 64]` |
+| `indicxlit-decoder.int8.onnx` | 7,070,073 | `ba94caddf41ca54202f4a439677d7a3034f8ed9f32c3ae993d87c6cda3c3140d` | `token` `[B, 1]`, `pos` `[1]`, `self_k`/`self_v` `[6, B, 4, T, 64]`, `cross_k`/`cross_v` → `logp` `[B, 806]`, `new_k`/`new_v` `[6, B, 4, T+1, 64]` |
+| `indicxlit-vocab.txt` | 5,243 | `313b400545b4b08341ad10c33e2d73baaefb194c18e2d74bcdf00392efcdbea5` | `s<TAB>symbol` for the 54 source ids, then `t<TAB>symbol` for the 806 target ids, in id order |
+
+Measured against the keyboard's own phonetic suggestions (spelling map, word
+list siblings, rules) on held-out words, with the model's readings joined
+after the committed one: Bengali top-4 52% → 80% on chat spellings the map
+does not list, Hindi 88% → 93%; on the Aksharantar test words Bengali 30% →
+80%, Hindi 55% → 84%.
