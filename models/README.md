@@ -25,3 +25,48 @@ The conversion was taken from
 (Apache-2.0) and checked before it was mirrored here: run side by side with the
 rembg ONNX on the same input, the largest difference on any of the seven
 outputs is 3e-5.
+
+## Meaning-based search: EmbeddingGemma 2
+
+The keyboard's **Search by meaning**: clipboard, notes, snippets and emoji
+found by what they mean, in any language, and pictures (own stickers, GIFs
+saved to a pack, photos) found by what they show. One model family puts text
+and pictures in the same space, so a typed query is compared with both.
+
+These files are not in the tree. They are assets of the
+[`models` release](https://github.com/wasi-master/wmkeyboard-data/releases/tag/models),
+named `<sha256>-<name>` like the `natives` release beside it: pinned by the
+app, never replaced, a new file gets a new digest.
+`scripts/repack_embeddinggemma2.py` builds them and
+`scripts/upload_embedding_models.sh` uploads them.
+
+| | |
+|---|---|
+| Model | EmbeddingGemma 2 (Google, 2026): Text 270M, and the vision tower of Text Vision 440M |
+| Source | `litert-community/embeddinggemma-2-text-270m-litert-lm` at `9be6e8b9`, `embeddinggemma-2-text-270m.litertlm` (`sha256 2d079ee2…0ab286fb`); `litert-community/embeddinggemma-2-text-vision-440m-litert-lm` at `e301f74d`, `embeddinggemma-2-text-vision-440m.litertlm` (`sha256 92dcbea1…4f62eb0`) |
+| Change | Repackaged only: the LiteRT-LM bundle's external weight sections are written back into ordinary TFLite buffers, and the int4 token table becomes a flat file the app reads without an interpreter. No weight is requantised. |
+| License | [Apache-2.0](https://huggingface.co/google/embeddinggemma-2), © Google |
+
+Text (162,386,589 bytes in all):
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `eg2-tokenizer.model` | 4,689,013 | `e594c8a90eb08d8bda498ff4747977dc827ae0c3c56b5c0d41a605a22d02ef03` | SentencePiece BPE model, byte fallback, 262,144 pieces (identical to `google/embeddinggemma-2`'s `tokenizer.model`) |
+| `eg2-tokens.bin` | 68,157,456 | `3bc62fc4be4c2c9bc5c9902e8b41a19e698a6b218314390fa2411f4242ae5160` | `WMTE`, int32 vocabulary, int32 width (512), float32 multiplier (√512), one float32 scale per row, then rows of signed int4 pairs, low nibble first |
+| `eg2-text-encoder.tflite` | 89,540,120 | `912763557c5b892d6db76a95382ac9141fc55b1ee4e0ee786d454b70c12d8ccb` | signatures `encoder_1x{128,256,512,1024,2048,8192}`: `embeddings` `[1, n, 512]`, `input_mask` `[1, n]` → `encodings` `[1, 768]` (L2-normalise it) |
+
+Pictures (223,049,792 bytes more):
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `eg2-vision-encoder.tflite` | 221,463,320 | `9631a9cbe1193808c2ce0da69f2f82b6f6edf98983a911b998451ed2c3a70896` | signature `vision_140`: `images` `[1, 1260, 768]` (16×16 RGB patches, 0..1), `positions_xy` `[1, 1260, 2]` (-1 for padding) → `features` `[1, 140, 768]`, `mask` `[1, 140]` |
+| `eg2-vision-adapter.tflite` | 1,584,424 | `2b6a2d32a51ab551c3694429d0d0c71269ba7e0d209032c18f37ae0bfb3cb24e` | signature `vision_adapter_140`: `soft_tokens` → `mm_embedding` `[1, 140, 512]` |
+| `eg2-image-end.bin` | 2,048 | `e6599ba28ac69c35da660a0f938b589ffc94d203bcbd6797ec46df71d7c5990a` | the end-of-image embedding, 512 float32 |
+
+A text is `<bos>`, its tokens, `<eos>`; a picture is `<bos>`, `<|image>`,
+its valid soft tokens, the end-of-image embedding, `<eos>`; both go through
+the text encoder. Queries take the prefix `task: search result | query: `,
+stored texts `title: none | text: `. Checked through LiteRT 2.3.0 on these
+exact files: English, Bengali and French texts rank as expected against each
+other, and text queries pick the matching COCO photograph (cats on a sofa,
+a skier, a bedroom, tennis, baseball, including a Bengali query).

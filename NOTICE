@@ -52,3 +52,11 @@ data/README.md lists under "eBible and Glot500 Word Lists") count the words of:
 
   Glot500-c, https://huggingface.co/datasets/cis-lmu/Glot500
   A collection of openly licensed text; see the dataset card for each source.
+
+The `models` release (not this tree) carries files repackaged from Google's
+EmbeddingGemma 2 LiteRT-LM bundles (litert-community on Hugging Face):
+
+  Copyright Google LLC
+  Licensed under the Apache License, Version 2.0. Only the container
+  format changed; scripts/repack_embeddinggemma2.py says how, and
+  models/README.md lists each file.

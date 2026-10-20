@@ -10,3 +10,7 @@ __pycache__
 
 # Offline dictionary sources (OEWN XML, kaikki cut)
 /dictionary/cache/
+
+# Built by scripts/repack_embeddinggemma2.py; published as release assets
+/models/embeddings/
+/.cache-embeddinggemma2/
