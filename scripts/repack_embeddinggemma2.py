@@ -16,7 +16,12 @@ such a pointer, so this script:
   as the bundle stores them;
 * gives the text encoder, the vision encoder and the vision adapter ordinary
   inline buffers for their weights (one buffer per distinct weight, since
-  the six encoder signatures share theirs);
+  the encoder signatures share theirs);
+* keeps only the signatures the app runs (text 128, 256 and 512 tokens;
+  pictures at 70 soft tokens), shortest first, with the subgraphs and
+  buffers they reach: the classic interpreter prepares subgraph 0 the moment
+  it loads a file, and in the bundle that is the 1024-token encoder and the
+  140-token vision tower, several hundred megabytes of arena for nothing;
 * runs the end-of-image graph, which takes no input, once and keeps its
   512 floats.
 
@@ -183,6 +188,69 @@ def inline_weights(graph_bytes, weights_bytes):
     return bytes(builder.Output())
 
 
+def _subgraph_refs(op):
+    """The (options object, attribute) pairs of [op] that name a subgraph."""
+    refs = []
+    for options in (op.builtinOptions, getattr(op, "builtinOptions2", None)):
+        if options is None:
+            continue
+        for attr in ("decompositionSubgraphIndex", "condSubgraphIndex", "bodySubgraphIndex",
+                     "thenSubgraphIndex", "elseSubgraphIndex", "initSubgraphIndex"):
+            if hasattr(options, attr):
+                refs.append((options, attr))
+    return refs
+
+
+def keep_signatures(model_bytes, keys):
+    """Drops every signature but [keys], in that order (the first becomes
+    subgraph 0), with the subgraphs and buffers nothing kept reaches."""
+    model = schema.ModelT.InitFromPackedBuf(model_bytes, 0)
+    by_key = {sd.signatureKey.decode(): sd for sd in model.signatureDefs}
+    missing = [k for k in keys if k not in by_key]
+    if missing:
+        raise SystemExit(f"no signature {missing}")
+    order = [by_key[k].subgraphIndex for k in keys]
+    queue = list(order)
+    while queue:
+        index = queue.pop(0)
+        for op in model.subgraphs[index].operators or []:
+            for options, attr in _subgraph_refs(op):
+                target = getattr(options, attr)
+                if target not in order:
+                    order.append(target)
+                    queue.append(target)
+    remap = {old: new for new, old in enumerate(order)}
+    model.subgraphs = [model.subgraphs[i] for i in order]
+    for subgraph in model.subgraphs:
+        for op in subgraph.operators or []:
+            for options, attr in _subgraph_refs(op):
+                setattr(options, attr, remap[getattr(options, attr)])
+    model.signatureDefs = [by_key[k] for k in keys]
+    for sd in model.signatureDefs:
+        sd.subgraphIndex = remap[sd.subgraphIndex]
+    # Buffers: 0 stays the empty sentinel; then whatever is still used.
+    used = [0]
+    for subgraph in model.subgraphs:
+        for tensor in subgraph.tensors:
+            if tensor.buffer not in used:
+                used.append(tensor.buffer)
+    for meta in model.metadata or []:
+        if meta.buffer not in used:
+            used.append(meta.buffer)
+    buffer_map = {old: new for new, old in enumerate(used)}
+    model.buffers = [model.buffers[i] for i in used]
+    for subgraph in model.subgraphs:
+        for tensor in subgraph.tensors:
+            tensor.buffer = buffer_map[tensor.buffer]
+    for meta in model.metadata or []:
+        meta.buffer = buffer_map[meta.buffer]
+    model.metadataBuffer = [buffer_map[i] for i in (model.metadataBuffer or []) if i in buffer_map] or None
+    size = sum(len(b.data) for b in model.buffers if b.data is not None)
+    builder = flatbuffers.Builder(size + (64 << 20))
+    builder.Finish(model.Pack(builder), file_identifier=b"TFL3")
+    return bytes(builder.Output())
+
+
 def token_table(graph_bytes, weights_bytes):
     model = schema.ModelT.InitFromPackedBuf(graph_bytes, 0)
     graph = model.subgraphs[0]
@@ -231,21 +299,21 @@ def main():
         read_section(text, section_of(found, SECTION_TFLITE, "tf_lite_embedder")),
         read_section(text, section_of(found, SECTION_WEIGHTS, "tf_lite_embedder")),
     ), manifest)
-    write(args.out, "eg2-text-encoder.tflite", inline_weights(
+    write(args.out, "eg2-text-encoder.tflite", keep_signatures(inline_weights(
         read_section(text, section_of(found, SECTION_TFLITE, "tf_lite_text_encoder")),
         read_section(text, section_of(found, SECTION_WEIGHTS, "tf_lite_text_encoder")),
-    ), manifest)
+    ), ["encoder_1x128", "encoder_1x256", "encoder_1x512"]), manifest)
 
     vision = fetch(VISION_REPO, VISION_REV, VISION_FILE, VISION_SHA, args.cache)
     found = sections(vision)
-    write(args.out, "eg2-vision-encoder.tflite", inline_weights(
+    write(args.out, "eg2-vision-encoder.tflite", keep_signatures(inline_weights(
         read_section(vision, section_of(found, SECTION_TFLITE, "tf_lite_vision_encoder")),
         read_section(vision, section_of(found, SECTION_WEIGHTS, "tf_lite_vision_encoder")),
-    ), manifest)
-    write(args.out, "eg2-vision-adapter.tflite", inline_weights(
+    ), ["vision_70"]), manifest)
+    write(args.out, "eg2-vision-adapter.tflite", keep_signatures(inline_weights(
         read_section(vision, section_of(found, SECTION_TFLITE, "tf_lite_vision_adapter")),
         read_section(vision, section_of(found, SECTION_WEIGHTS, "tf_lite_vision_adapter")),
-    ), manifest)
+    ), ["vision_adapter_70"]), manifest)
     eoi_path = os.path.join(args.cache, "end_of_vision.tflite")
     with open(eoi_path, "wb") as f:
         f.write(read_section(vision, section_of(found, SECTION_TFLITE, "tf_lite_end_of_vision")))
