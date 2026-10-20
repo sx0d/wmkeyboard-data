@@ -20,6 +20,11 @@ named `<sha256>-<library>`, for example
   and F-Droid's from the build F-Droid makes from source, which is
   reproducible, so both are usually the same file.
 
+`libwmvoikko.so` (Finnish spell checking) is libvoikko 4.3.3 with a JNI
+bridge, offered under MPL 1.1, GPL 2+ or LGPL 2.1+. Its source is
+`native/voikko-jni` in the app repository plus corevoikko at commit
+`4b838726d6e11af235b5aba50dcc056bc17c8176`, which its `build.sh` fetches.
+
 Libraries this project may not redistribute (ML Kit, LiteRT, LiteRT-LM and
 Qualcomm's QNN runtime) are not here. The app reads those straight out of the
 vendor's own package on Google's Maven repository or Maven Central.
