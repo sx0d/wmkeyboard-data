@@ -144,3 +144,29 @@ The picture filter every generated sticker passes through:
 
 The NPU model (Stable Diffusion 1.5 as Qualcomm AI Hub compiled it for each
 Snapdragon) is not here: the phone fetches it from Qualcomm's own bucket.
+
+## Text scan: PaddleOCR PP-OCRv5 on MNN
+
+The scanner's **Text scan** in builds without LiteRT (F-Droid's): Chinese,
+Japanese and Latin-script text read on the phone. Builds with LiteRT download
+the LiteRT conversion of the same models from iFleey/PPOCRv5-Android instead,
+and both share the character list from there (`keys_v5.txt`, identical to the
+recogniser's own list). These two files are assets of the
+[`models` release](https://github.com/wasi-master/wmkeyboard-data/releases/tag/models),
+named `<sha256>-<name>`. `scripts/export_ppocrv5_mnn.py <dir>` builds them and
+`scripts/upload_embedding_models.sh <dir> ppocrv5-` uploads them. MNN writes a
+random model id into each file, so a rebuild has different bytes and needs new
+pins in the app (`PaddleOcrModel.kt`); the pins below are the published files'.
+
+| | |
+|---|---|
+| Model | PP-OCRv5 mobile (PaddlePaddle, 2025): a DB text detector and an SVTR-LCNet CTC line recogniser for Simplified and Traditional Chinese, Japanese, pinyin and English |
+| Source | `PaddlePaddle/PP-OCRv5_mobile_det` at `0d63e78e2b680928f6b1747d76a08db6e645efb7`, `PaddlePaddle/PP-OCRv5_mobile_rec` at `682f20538d8c086cb2128e5cfac775e6c4904e85` (the `inference.json` and `inference.pdiparams` of each, checked by SHA-256 in the script) |
+| Change | paddle2onnx 2.1.0 (opset 14); an NHWC input in front and the output renamed, so the graphs take and give the same tensors as the LiteRT pair; every float constant rounded through float16 and back, as the LiteRT pair's weights are; MNN 3.6.1 converter, weights stored as float32. MNN's own float16 storage is not used: it rounds again after folding BatchNorm and misread lines the LiteRT pair reads right |
+| Checked | Through the app's own pipeline on 14 rendered pages (Chinese in both scripts, Japanese including a vertical column, English, a dark page, noise and blur, rotation, a 2,000-pixel line, a 3,000 × 2,000 photo): the same text as the LiteRT pair on all 63 lines. On random inputs the largest difference from LiteRT is 3.4e-7 (detector) and 0.0093 (recogniser) |
+| License | [Apache-2.0](https://github.com/PaddlePaddle/PaddleOCR/blob/main/LICENSE), © PaddlePaddle Authors |
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `ppocrv5-det.mnn` | 4,736,960 | `284230c74bc0e395ae1f164d4ede101888f62f3507e3d5dac4125af8ac4a9a43` | `image` [1, 640, 640, 3] (BGR, ImageNet mean and deviation) → `probs` [1, 1, 640, 640], text probability per pixel |
+| `ppocrv5-rec.mnn` | 16,503,532 | `9662f1605cd4e3848b7bf6f67c73315dc32349864d653784349aedb575abc330` | `image` [1, 48, 320, 3] (BGR scaled to ±1) → `probs` [1, 40, 18385], CTC classes per step: blank, the 18,383 characters, space |
