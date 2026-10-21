@@ -14,3 +14,5 @@ __pycache__
 # Built by scripts/repack_embeddinggemma2.py; published as release assets
 /models/embeddings/
 /.cache-embeddinggemma2/
+# Built by scripts/export_punctuation.py; published as release assets
+/models/punctuation/

@@ -195,3 +195,28 @@ pins in the app (`UpscaleModels.kt`); the pins below are the published files'.
 |---|---:|---|---|
 | `sr-waifu2x-upconv7-art.mnn` | 2,212,756 | `a01167275376f18e224a17cf24e2f1dcec5bb636d21d7bf460abd5451631dd84` | `image` [1, 3, H, W] RGB from 0 to 1 → `upscaled` [1, 3, 2(H − 14), 2(W − 14)]: stickers, drawings, screenshots |
 | `sr-waifu2x-upconv7-photo.mnn` | 2,212,756 | `7a306a9e37f86d3a48ec9d17724771b4229ebaf64f694c8534ca7e162be5704d` | The same, trained on photographs |
+
+## Dictation punctuation: punctuation-restoration-small
+
+The keyboard's **Add punctuation and capitals**: full stops, commas and
+question marks put back into the bare words two of its offline voice engines
+write (Sherpa, Omnilingual), in 88 languages. These three files are assets of
+the [`models` release](https://github.com/wasi-master/wmkeyboard-data/releases/tag/models),
+named `<sha256>-<name>`. `scripts/export_punctuation.py <dir>` builds them and
+`scripts/upload_embedding_models.sh <dir> punct-` uploads them. The build is
+deterministic: two runs wrote the same weights byte for byte.
+
+| | |
+|---|---|
+| Model | punctuation-restoration-small v1.1 (Horizon Labs, 2026): mmBERT-small token classification, one label per word on its last token: nothing, `.` `,` `?` `-` `:` |
+| Source | `Horizon-Labs/punctuation-restoration-small` at `ee31fdfc5304f876ea3b0dd72d30eda7e940b2b1`: `onnx/model.onnx` (fp32), `tokenizer.json`, `config.json`, each checked by size and SHA-256 in the script |
+| Change | The token table quantised to int8 with a scale per row and dequantised after its Gather; every MatMul quantised weight-only to 8 bits (MatMulNBits, blocks of 32, symmetric, int8 compute); the weights written to an external data file, which ONNX Runtime maps instead of copying. The tokenizer's 256,000 pieces written as a SentencePiece BPE `ModelProto`, each piece scored by the rank of the first merge that makes it |
+| Checked | Labels identical to the fp32 model on the script's samples; on FLORES-200 (200 paragraphs each of en, bn, hi, es, ar, zh, ru, fr) the same F1 as fp32 in every language. The tokenizer, run the app's way (BPE by piece score, a word at a time), gives Hugging Face tokenizers' ids on 3,200 test texts. Built with onnxruntime 1.31.0 and checked on 1.30.0, the app's |
+| Chosen | Measured against 1-800-BAD-CODE's punct_cap_seg_47_language and xlm-roberta_punctuation_fullstop_truecase and sherpa-onnx's CT-Transformer: the best punctuation in all eight languages on FLORES. See `native/sherpa-onnx-jni/README.md` in the app repository |
+| License | [Apache-2.0](https://huggingface.co/Horizon-Labs/punctuation-restoration-small), © Horizon Labs; built on [mmBERT](https://huggingface.co/jhu-clsp/mmBERT-small) (MIT, Johns Hopkins University) |
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `punct-mmbert-small.onnx` | 588,015 | `1d0ac3af30fa5de2c913f3ab80b26a94a790a988a270adcb239a3a5248f0efe7` | The graph: `input_ids`, `attention_mask` [1, n] int64 → `logits` [1, n, 6]; `<bos>` (2) first and `<eos>` (1) last |
+| `punct-mmbert-small.onnx.data` | 145,913,856 | `1927826af2b8dae8b879aec82647c74fd26ca79645fb300934607e60f0f526ae` | Its weights, the external data the graph names: keep the file name |
+| `punct-mmbert-small.model` | 4,747,941 | `13cb25eeae71780a9e52d3771ebbc59a7a0eb2274ebcb20e203d68460f93a6d4` | SentencePiece BPE model, byte fallback, 256,000 pieces |
