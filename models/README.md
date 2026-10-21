@@ -170,3 +170,28 @@ pins in the app (`PaddleOcrModel.kt`); the pins below are the published files'.
 |---|---:|---|---|
 | `ppocrv5-det.mnn` | 4,736,960 | `284230c74bc0e395ae1f164d4ede101888f62f3507e3d5dac4125af8ac4a9a43` | `image` [1, 640, 640, 3] (BGR, ImageNet mean and deviation) → `probs` [1, 1, 640, 640], text probability per pixel |
 | `ppocrv5-rec.mnn` | 16,503,532 | `9662f1605cd4e3848b7bf6f67c73315dc32349864d653784349aedb575abc330` | `image` [1, 48, 320, 3] (BGR scaled to ±1) → `probs` [1, 40, 18385], CTC classes per step: blank, the 18,383 characters, space |
+
+## Upscale: waifu2x UpConv7 on MNN
+
+The keyboard's **Upscale**, in the sticker editor and the gallery's photo
+editor, and for small stickers sent to WhatsApp or Messenger as a 512 square:
+the picture redrawn two or four times larger on the phone. These two files are
+assets of the [`models` release](https://github.com/wasi-master/wmkeyboard-data/releases/tag/models),
+named `<sha256>-<name>`. `scripts/export_upscalers_mnn.py <dir>` builds them and
+`scripts/upload_embedding_models.sh <dir> sr-` uploads them. MNN writes a
+random model id into each file, so a rebuild has different bytes and needs new
+pins in the app (`UpscaleModels.kt`); the pins below are the published files'.
+
+| | |
+|---|---|
+| Model | waifu2x UpConv7 (nagadomi, 2015–2017): six unpadded 3x3 convolutions with leaky ReLU and a 4x4 transposed convolution, ×2 per pass. The `noise1_scale2.0x` weights, which also undo light JPEG noise, for illustrations (`art`) and for photographs (`photo`) |
+| Source | `nagadomi/waifu2x` at `cc385f97a9debfe611316aabfd5d8bb30ba2dbeb`, `models/upconv_7/{art,photo}/noise1_scale2.0x_model.json` (checked by SHA-256 in the script) |
+| Change | The JSON weights loaded into the same layers in PyTorch, exported to ONNX (opset 17, height and width free) and converted with MNN 3.6.1's converter, weights stored as float32. A tile of side n + 14 comes out as exactly 2n |
+| Checked | MNN against PyTorch on random tiles: largest difference 0.0015 on a 0 to 1 scale, under half of one 8-bit step. MNN's float16 compute draws wrong pixels on this network (PSNR 7 dB against float32), so the app runs float32 |
+| Chosen | Measured on an Apple M2 (MNN CPU, 4 threads) against Real-ESRGAN's realesr-animevideov3, realesr-general-x4v3 and RealESRGAN_x4plus_anime_6B and waifu2x's CUNet and Swin-UNet, on OpenMoji stickers, John Tenniel's line art and Kodak photos: the most faithful (stickers ×4 with transparency 38.9 dB, Kodak ×2 31.4 dB, against 30.4 and 28.4 for realesr-animevideov3) and the fastest at photo sizes (1080p ×2 in 2.7 s, against 11.8 s and 23.6 s for the compact Real-ESRGAN networks; ONNX Runtime 12.7 s on the same network) |
+| License | [MIT](https://github.com/nagadomi/waifu2x/blob/master/LICENSE), © 2015 nagadomi |
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `sr-waifu2x-upconv7-art.mnn` | 2,212,756 | `a01167275376f18e224a17cf24e2f1dcec5bb636d21d7bf460abd5451631dd84` | `image` [1, 3, H, W] RGB from 0 to 1 → `upscaled` [1, 3, 2(H − 14), 2(W − 14)]: stickers, drawings, screenshots |
+| `sr-waifu2x-upconv7-photo.mnn` | 2,212,756 | `7a306a9e37f86d3a48ec9d17724771b4229ebaf64f694c8534ca7e162be5704d` | The same, trained on photographs |
