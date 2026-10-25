@@ -18,6 +18,14 @@ avrodict.js) as data/bn/bn_avro_dictionary.txt.gz:
   data/LICENSE-AVRO-MPL-1.1.txt. Only the encoding changed; data/README.md
   says how.
 
+It also redistributes the Khipro layout definitions (the m17n specs of
+rank-coder/khipro-m17n, KhiproTeam/khipro-mim-touchscreen,
+KhiproTeam/khipro-dark-m17n and KhiproTeam/khipro-dark-mim-touchscreen) and
+their conformance tables, unchanged, under data/bn/khipro/:
+
+  Copyright (c) 2024 rank_coder
+  Licensed under the MIT License; see data/LICENSE-KHIPRO-MIT.txt.
+
 The offline dictionaries under dictionary/ are derived works of:
 
   Open English WordNet 2024, https://en-word.net/

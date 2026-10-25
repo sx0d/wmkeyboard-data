@@ -1,0 +1,70 @@
+{
+  "format": 1,
+  "revision": "2026-10-25T13:25:34Z",
+  "upstream": {
+    "rank-coder/khipro-m17n": "f4ef2771e391",
+    "KhiproTeam/khipro-mim-touchscreen": "01318c040255",
+    "KhiproTeam/khipro-dark-m17n": "cc0ad16eae20",
+    "KhiproTeam/khipro-dark-mim-touchscreen": "6dc269f98673"
+  },
+  "files": {
+    "desktop": {
+      "spec": {
+        "name": "bn-khipro.mim",
+        "size": 59366,
+        "sha256": "7f21cd8d9583985fe993071baa90001da54061a8a467b537cba86d47ed91652a"
+      },
+      "cases": {
+        "name": "khipro-testcases.tsv",
+        "size": 1506,
+        "sha256": "f9a3fd0ac2c4e01dfabd8793dddb7668716292b6179b081acc0525863ed93b9c"
+      }
+    },
+    "touchscreen": {
+      "spec": {
+        "name": "bn-khipro-touchscreen.mim",
+        "size": 58679,
+        "sha256": "21d2bc8e4b1f8fc85ca993a7b6a6ae9ce923b2954d1d8b13f104e2de205613b1"
+      },
+      "cases": {
+        "name": "khipro-testcases-touch.tsv",
+        "size": 1436,
+        "sha256": "45c1e13df8218681c4eeedf43791281012f3383f57420da691e01db26279134b"
+      }
+    },
+    "dark_desktop": {
+      "spec": {
+        "name": "bn-khipro-dark.mim",
+        "size": 47259,
+        "sha256": "ade177cb0f5a2689252f7feebccf4f15803710eeae93dff04c787c38695849da"
+      },
+      "cases": {
+        "name": "khipro-dark-testcases.tsv",
+        "size": 1706,
+        "sha256": "379c3bc646913641ca7fa3fbe5c7105753889716e3593fd1fd7603e38faf5402"
+      }
+    },
+    "dark_touchscreen": {
+      "spec": {
+        "name": "bn-khipro-dark-touchscreen.mim",
+        "size": 46757,
+        "sha256": "cfc6776309c59cd469d1332bf11d9e5dcb949f19972ddfafb76265e84fa236b3"
+      },
+      "cases": {
+        "name": "khipro-dark-testcases-touch.tsv",
+        "size": 1636,
+        "sha256": "225a8c36cea0ba65fb1d91d77b1d8d969d6e89eea2192115192057d9647373fc"
+      }
+    }
+  },
+  "stale": [
+    [
+      "kso/",
+      "কসঁ"
+    ],
+    [
+      "........",
+      "......."
+    ]
+  ]
+}

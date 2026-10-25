@@ -132,6 +132,29 @@ Keyboard's own Khipro interpreter (running the Khipro team's MIT-licensed
 `bn-khipro.mim`) backwards over the list. Rerun it whenever `bn_full.txt.gz`
 changes.
 
+### Khipro layout rules
+
+`bn/khipro/` is the Khipro team's current layout definition, which WM Keyboard
+installs over the copy its engine was built with, so a layout fix reaches
+phones without an app release: four m17n specs (`bn-khipro.mim` and
+`bn-khipro-dark.mim` for hardware keyboards, the `-touchscreen` ones for the
+keys on screen), the conformance table each spec's repository keeps beside it,
+and `bn_khipro_specs.json`, which names the set's revision and every file's
+size and SHA-256. The specs are unchanged copies from
+[rank-coder/khipro-m17n](https://github.com/rank-coder/khipro-m17n),
+[KhiproTeam/khipro-mim-touchscreen](https://github.com/KhiproTeam/khipro-mim-touchscreen),
+[KhiproTeam/khipro-dark-m17n](https://github.com/KhiproTeam/khipro-dark-m17n) and
+[KhiproTeam/khipro-dark-mim-touchscreen](https://github.com/KhiproTeam/khipro-dark-mim-touchscreen),
+Copyright (c) 2024 rank_coder, under the [MIT License](LICENSE-KHIPRO-MIT.txt);
+the manifest records the upstream commit of each.
+
+The app takes a set only when every file matches the manifest, the set is newer
+than the specs it types with, and every spec types every case of its table
+(less the stale cases the manifest lists). `scripts/build_bn_khipro_specs.sh`
+fetches the upstream files, runs the same check with the app's interpreter and
+writes the manifest. Rerun it after any upstream change; never edit a file by
+hand, since the hashes would no longer match.
+
 ### Offensive Word Lists
 
 The `<lang>_offensive.txt.gz` files contain offensive, profane, and sensitive words to be used for content filtering. They are aggregated from various permissive open-source repositories:
