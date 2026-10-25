@@ -104,6 +104,51 @@ after the committed one: Bengali top-4 52% → 80% on chat spellings the map
 does not list, Hindi 88% → 93%; on the Aksharantar test words Bengali 30% →
 80%, Hindi 55% → 84%.
 
+## Romanized dictation: IndicXlit, Indic to English
+
+The keyboard's **Romanized dictation model**: dictation in Hinglish, Banglish
+and the other romanized languages is heard as the language itself and
+written back in Latin letters, and this model spells the words of five
+letters or more that the spelling maps do not know. Shorter ones stay with
+the keyboard's rules. One model for every language.
+
+Assets of the same `models` release. `scripts/export_indicxlit.py
+--direction indic-en` builds them (the same bytes on every run with the
+versions it names) and
+`scripts/upload_embedding_models.sh models/indicxlit-latin indicxlit-latin-`
+uploads them.
+
+| | |
+|---|---|
+| Model | IndicXlit v1.0, Indic to English (AI4Bharat, Madhani et al., *Aksharantar*, 2022): the same fairseq transformer as above with the vocabularies swapped, 21 languages, the source tagged with its language (`encoder_langtok=src`) |
+| Source | `indicxlit-indic-en-v1.0.zip` on the [IndicXlit v1.0 release](https://github.com/AI4Bharat/IndicXlit/releases/tag/v1.0) (`sha256 420d23a1…5a3322`), checkpoint `transformer/indicxlit.pt` (`sha256 45ffecef…976f28`) |
+| Change | As above: exported without fairseq, the decoder as one cached step, int8 (dynamic, MatMul) |
+| License | [MIT](https://github.com/AI4Bharat/IndicXlit/blob/master/LICENSE), © AI4Bharat |
+
+| File | Bytes | SHA-256 | What it is |
+|---|---:|---|---|
+| `indicxlit-latin-encoder.int8.onnx` | 6,842,820 | `a6f8a8642a3fe05c4619500e5f7aada2d691ba7b91be94d5d6c0902e95bd81c2` | `src` `[1, S]` int64 (`__<lang>__`, the native characters NFC without joiners, `</s>`) → `cross_k`, `cross_v` `[6, 1, 4, S, 64]` |
+| `indicxlit-latin-decoder.int8.onnx` | 6,107,507 | `2a4d5c65bb619397ed3e807d94afcdb7826ff0d42171d6ea1a694792a9cf7f57` | as above, `logp` `[B, 54]` |
+| `indicxlit-latin-vocab.txt` | 5,243 | `23ff975af338afc2a6223a53f3e1261eefa4dd3438342aee00a5a76b41f2dea7` | `s<TAB>symbol` for the 806 source ids, then `t<TAB>symbol` for the 54 target ids, in id order |
+
+Top-1 on 1,500 Aksharantar test words a language (native to Latin, a word
+right when any of the test set's spellings for it came out), beam 4:
+
+| | as | bn | gu | hi | kn | ml | mr | ne | or | pa | ta | te | ur | all |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| keyboard's rules | 25.1 | 25.7 | 35.2 | 38.9 | 40.9 | 38.7 | 26.1 | 17.8 | 14.6 | 25.6 | 34.6 | 43.1 | 16.2 | 29.4 |
+| model | 60.9 | 44.1 | 53.1 | 60.5 | 72.2 | 59.7 | 59.3 | 69.0 | 48.6 | 48.8 | 51.5 | 60.2 | 40.6 | 56.0 |
+| model, top-4 | 81.7 | 64.9 | 74.8 | 82.5 | 88.9 | 77.9 | 75.6 | 81.9 | 69.9 | 72.4 | 72.9 | 80.1 | 64.7 | 76.0 |
+| as the keyboard uses it | 57.3 | 43.6 | 52.3 | 60.1 | 71.2 | 59.3 | 57.9 | 65.3 | 46.1 | 48.5 | 51.7 | 59.5 | 35.9 | 54.5 |
+
+"As the keyboard uses it" is the model from five native characters up and
+the rules below. Short words are where the model goes wrong: on the 955
+words of the keyboard's `*_rom` spelling maps that its inverted maps leave
+out (mostly short, common words), the rules wrote the map's spelling for
+55.1%, the model for 18.6% (की as "key", कब as "cub"), and the split for
+57.5%. The model was trained on Aksharantar's training half, so the test
+half favours it over the rules, which never saw it.
+
 ## Sticker generator: SDXS-512-DreamShaper and the picture filter
 
 The keyboard's **Create stickers**: type a prompt, the phone draws the sticker.

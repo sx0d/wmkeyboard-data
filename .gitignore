@@ -16,3 +16,6 @@ __pycache__
 /.cache-embeddinggemma2/
 # Built by scripts/export_punctuation.py; published as release assets
 /models/punctuation/
+# Built by scripts/export_indicxlit.py; published as release assets
+/models/indicxlit/
+/models/indicxlit-latin/
